@@ -4,6 +4,7 @@
 #include <map>
 #include <string>
 #include <vector>
+#include "Gateway.h"
 #include "Item.h"
 
 using namespace std;
@@ -13,24 +14,32 @@ class Room {
     private:
         string name;
         string description;
-        map<string, Room*> exits;
-        vector<Item> itemsInRoom;
-        string exitString();
+        vector<Gateway*> gateways;
+        vector<Item> items;
 
     public:
-        Room(string description);
+        Room(string name, string description);
+        string toString();
+
+        // Getters and Setters
+        string getName();
+        string getDescription();
+        void setName(string name);
+        void setDescription(string description);
 
         // Room related
-        void setExits(Room *north, Room *east, Room *south, Room *west);
-        Room* nextRoom(string direction);
-        string shortDescription();
-        string longDescription();
+        void addGateway(Gateway* gateway);
+        vector<Gateway*> getGateways();
 
         // Item related
-        void addItem(Item *inItem);
-        void removeItemFromRoom(int location);
-        string displayItem();
-        int isItemInRoom(string inString);
+        void addItem(Item *item);
+        bool removeItem(Item *item);
+        bool removeItem(int id);
+        bool isItemInRoom(Item *item);
+        bool isItemInRoom(int id);
+        string displayItems();
         int numberOfItems();
+
+}
 
 #endif

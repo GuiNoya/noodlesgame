@@ -16,11 +16,13 @@ SOURCES += main.cpp\
     Room.cpp \
     ZorkUL.cpp \
     GameWindow.cpp \
-    Item.cpp
+    Item.cpp \
+    Gateway.cpp
 
 HEADERS  += \
     Character.h \
     Room.h \
     ZorkUL.h \
     GameWindow.h \
-    Item.h
+    Item.h \
+    Gateway.h
