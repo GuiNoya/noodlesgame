@@ -4,28 +4,33 @@
 #include <map>
 #include <string>
 #include <vector>
-#include "item.h"
+#include "Item.h"
+
 using namespace std;
-using std::vector;
 
 class Room {
-private:
-    string description;
-    map<string, Room*> exits;
-    string exitString();
-    vector <Item> itemsInRoom;
 
-public:
-    int numberOfItems();
-    Room(string description);
-    void setExits(Room *north, Room *east, Room *south, Room *west);
-    string shortDescription();
-    string longDescription();
-    Room* nextRoom(string direction);
-    void addItem(Item *inItem);
-    string displayItem();
-    int isItemInRoom(string inString);
-    void removeItemFromRoom(int location);
-};
+    private:
+        string name;
+        string description;
+        map<string, Room*> exits;
+        vector<Item> itemsInRoom;
+        string exitString();
+
+    public:
+        Room(string description);
+
+        // Room related
+        void setExits(Room *north, Room *east, Room *south, Room *west);
+        Room* nextRoom(string direction);
+        string shortDescription();
+        string longDescription();
+
+        // Item related
+        void addItem(Item *inItem);
+        void removeItemFromRoom(int location);
+        string displayItem();
+        int isItemInRoom(string inString);
+        int numberOfItems();
 
 #endif

@@ -12,20 +12,15 @@ TARGET = qthgame
 TEMPLATE = app
 
 SOURCES += main.cpp\
-    gamewindow.cpp \
-    item.cpp \
     Character.cpp \
-    Command.cpp \
-    CommandWords.cpp \
-    Parser.cpp \
     Room.cpp \
-    ZorkUL.cpp
+    ZorkUL.cpp \
+    GameWindow.cpp \
+    Item.cpp
 
-HEADERS  += gamewindow.h \
-    item.h \
+HEADERS  += \
     Character.h \
-    Command.h \
-    CommandWords.h \
-    Parser.h \
     Room.h \
-    ZorkUL.h
+    ZorkUL.h \
+    GameWindow.h \
+    Item.h

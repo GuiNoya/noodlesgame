@@ -1,5 +1,4 @@
 #include "Room.h"
-#include "Command.h"
 
 Room::Room(string description) {
     this->description = description;
@@ -83,4 +82,3 @@ int Room::isItemInRoom(string inString) {
     }
     return -1;
 }
-
