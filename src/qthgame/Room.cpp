@@ -4,7 +4,7 @@ Room::Room(string name, string description) : name(name), description(descriptio
 }
 
 string Room::toString() {
-    return "<Room Name=" + name + ", Description=" + description + ", Gateways=" + gateways + ", Items=" + items + ">";
+    return "<Room Name=" + name + ", Description=" + description + ", Items=" + /*items*/ + ">";
 }
 
 // Getters and Setters
@@ -22,20 +22,6 @@ void Room::setName(string name) {
 
 void Room::setDescription(string description) {
     this->description = description;
-}
-
-// Room related
-void Room::addGateway(Gateway* gateway) {
-    for (int i=gateways.size(); i >= 0; --i) {
-        if (gateways[i] == gateway) {
-            return;
-        }
-    }
-    gateways.push_back(gateway);
-}
-
-vector<Gateway*> Room::getGateways() {
-    return gateways;
 }
 
 // Item related
@@ -60,7 +46,7 @@ bool Room::removeItem(Item *item) {
 bool Room::removeItem(int id) {
     vector<Item*>::iterator i = items.begin();
     while (i != items.end()) {
-        if ((*i)->id == id) {
+        if ((*i)->getId() == id) {
             items.erase(i);
             return true;
         }
@@ -80,7 +66,7 @@ bool Room::isItemInRoom(Item *item) {
 
 bool Room::isItemInRoom(int id) {
     for (int i=items.size(); i >= 0; --i) {
-        if (items[i].getId() == id) {
+        if (items[i]->getId() == id) {
             return true;
         }
     }
@@ -90,10 +76,10 @@ bool Room::isItemInRoom(int id) {
 string Room::displayItems() {
     string tempString = "<Items ";
     const int size = items.size();
-    for (i=0; i < size; i++) {
+    for (int i=0; i < size; i++) {
         tempString += i+1;
         tempString += ": ";
-        tempString += items[i].toString();
+        //tempString += items[i]->toString();
         tempString += ", ";
     }
     tempString.erase(tempString.npos-1);

@@ -16,12 +16,14 @@ class Item {
         bool usable;
 
     public:
-        Item(int id=0, string name, string description, bool usable=true);
+        Item(string name, string description, int id, bool usable);
+        Item(string name, string description);
         int getId();
         string getName();
         string getDescription();
         bool isUsable();
         void setUsable(bool usable);
+        string toString();
 
 };
 

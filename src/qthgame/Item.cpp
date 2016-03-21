@@ -1,46 +1,31 @@
 #include "Item.h"
 
-Item::Item (string inDescription, int inWeightGrams, float inValue/**, int weaponCheck*/) {
-    description = inDescription;
-    setWeight(inWeightGrams);
-    value = inValue;
-    /**weaponCheck(isWeapon);*/
+Item::Item(string name, string description, int id, bool usable) : id(id), name(name), description(description), usable(usable) {
 }
 
-Item::Item(string inDescription) {
-    description = inDescription;
+Item::Item(string name, string description) : id(0), name(name), description(description), usable(true) {
 }
 
-void Item::setWeight(int inWeightGrams)
-{
-    if (inWeightGrams > 9999 || inWeightGrams < 0)
-        cout << "weight invalid, must be 0<weight<9999" ;
-    else
-	   weightGrams = inWeightGrams;
+int Item::getId() {
+    return 0;
 }
 
-void Item::setValue(float inValue)
-{
-    if (inValue > 9999 || inValue < 0)
-       cout << "value invalid, must be 0<value<9999" ;
-    else
-	   value = inValue;
+string Item::getName() {
+    return "";
 }
 
-/**void Item::setWeaponCheck(int isWeapon)
-{
-    if(isWeapon > 0 || isWeapon < 0)
-        cout << "Item not a weapon" ;
-    else
-        cout << "Item is a weapon" ;
-}*/
-
-string Item::getShortDescription()
-{
-    return description;
+string Item::getDescription() {
+    return "";
 }
 
-string Item::getLongDescription()
-{
-    return " item(s), " + description + ".\n";
+bool Item::isUsable() {
+    return true;
+}
+
+void Item::setUsable(bool usable) {
+    this->usable = usable;
+}
+
+string Item::toString() {
+    return "<Item>";
 }

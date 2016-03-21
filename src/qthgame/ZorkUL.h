@@ -5,6 +5,7 @@
 #include <string>
 #include "Room.h"
 #include "Item.h"
+#include "Gateway.h"
 
 using namespace std;
 
@@ -13,17 +14,19 @@ class ZorkUL {
     private:
         Room *currentRoom;
         vector<Room*> rooms;
-        void createRooms();
+        vector<Gateway*> gateways;
+        void createGame();
         void printWelcome();
-        void printHelp();
-        void goRoom(Command command);
-        void createItems();
-        void displayItems();
+        int actionIO(string message, vector<string> options);
+        string getMessage();
+        vector<string> getOptions(); // create Action, change string to Action
+        void doAction(int choice);
+
+        void changeRoom(Gateway* gateway);
 
     public:
         ZorkUL();
         void play();
-        string go(string direction);
 
 };
 
