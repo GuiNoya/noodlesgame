@@ -7,8 +7,9 @@
 
 using namespace std;
 
-ZorkUL::ZorkUL() {
+ZorkUL::ZorkUL() : p("Main Character"){
     createGame();
+    cout << p.toString() << endl;
 }
 
 void ZorkUL::createGame() {
@@ -102,7 +103,7 @@ void ZorkUL::changeRoom(Gateway* gateway) {
 
 int ZorkUL::actionIO(string message, vector<string> options) {
     cout << message << endl;
-    for (uint i=0; i < options.size(); i++) {
+    for (unsigned int i=0; i < options.size(); i++) {
         cout << i+1 << ". " << options[i] << endl;
     }
     cout << "> ";
@@ -147,7 +148,7 @@ void ZorkUL::doAction(int choice) {
         if (choice == 1) {changeRoom(gateways[0]);}
         else if (choice == 2) {changeRoom(gateways[1]);}
     } else if (currentRoom == CORR(1)) {
-        if (choice == 1) {cout << "You checked the plant, UHUUUUL!" << endl;}
+        if (choice == 1) {cout << "You checked the plant, UHUUUUL!" << endl; p.addItem(new Item(0, "key", "old key")); p.addItem(new Item(1, "b key", "old b key")); cout << p.toString() << endl;}
         else if (choice == 2) {changeRoom(gateways[1]);}
         else if (choice == 3) {cout << "Door is locked." << endl;}
         else if (choice == 4) {changeRoom(gateways[2]);}

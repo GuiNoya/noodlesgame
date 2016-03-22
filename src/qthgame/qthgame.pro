@@ -11,18 +11,21 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = qthgame
 TEMPLATE = app
 
+CONFIG += c++11
+CONFIG += console
+
 SOURCES += main.cpp\
-    Character.cpp \
     Room.cpp \
     ZorkUL.cpp \
     GameWindow.cpp \
     Item.cpp \
-    Gateway.cpp
+    Gateway.cpp \
+    Player.cpp
 
 HEADERS  += \
-    Character.h \
     Room.h \
     ZorkUL.h \
     GameWindow.h \
     Item.h \
-    Gateway.h
+    Gateway.h \
+    Player.h

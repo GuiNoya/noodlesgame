@@ -16,8 +16,7 @@ class Item {
         bool usable;
 
     public:
-        Item(string name, string description, int id, bool usable);
-        Item(string name, string description);
+        Item(int id, string name, string description, bool usable=true);
         int getId();
         string getName();
         string getDescription();

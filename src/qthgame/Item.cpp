@@ -1,25 +1,24 @@
 #include "Item.h"
+#include <string>
 
-Item::Item(string name, string description, int id, bool usable) : id(id), name(name), description(description), usable(usable) {
-}
-
-Item::Item(string name, string description) : id(0), name(name), description(description), usable(true) {
+Item::Item(int id, string name, string description, bool usable)
+    : id(id), name(name), description(description), usable(usable) {
 }
 
 int Item::getId() {
-    return 0;
+    return id;
 }
 
 string Item::getName() {
-    return "";
+    return name;
 }
 
 string Item::getDescription() {
-    return "";
+    return description;
 }
 
 bool Item::isUsable() {
-    return true;
+    return usable;
 }
 
 void Item::setUsable(bool usable) {
@@ -27,5 +26,10 @@ void Item::setUsable(bool usable) {
 }
 
 string Item::toString() {
-    return "<Item>";
+    string s = "<Item ID=";
+    s += to_string(id);
+    s += ", Name=" + name + ", Description=" + description + ", Usable=";
+    s += usable ? "True" : "False";
+    s += ">";
+    return s;
 }

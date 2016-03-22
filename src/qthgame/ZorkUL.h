@@ -6,12 +6,14 @@
 #include "Room.h"
 #include "Item.h"
 #include "Gateway.h"
+#include "Player.h"
 
 using namespace std;
 
 class ZorkUL {
 
     private:
+        Player p;
         Room *currentRoom;
         vector<Room*> rooms;
         vector<Gateway*> gateways;

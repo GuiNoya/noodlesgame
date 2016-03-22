@@ -1,13 +1,14 @@
 #include "Gateway.h"
 
-Gateway::Gateway(int id, Room* room1, Room* room2, bool locked/*=false*/) : id(id), locked(locked){
+Gateway::Gateway(int id, Room* room1, Room* room2, bool locked/*=false*/)
+    : id(id), locked(locked){
     this->rooms[0] = room1;
     this->rooms[1] = room2;
 }
 
 string Gateway::toString() {
     string str = "<item ID=";
-    str += id;
+    str += to_string(id);
     str += ", Rooms=";
     str += rooms[0]->toString();
     str += ", ";

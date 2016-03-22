@@ -4,7 +4,17 @@ Room::Room(string name, string description) : name(name), description(descriptio
 }
 
 string Room::toString() {
-    return "<Room Name=" + name + ", Description=" + description + ", Items=" + /*items*/ + ">";
+    string s = "<Room Name=" + name + ", Description=" + description + ", Items=";
+    if (items.size() > 0 ) {
+        for (vector<Item*>::iterator i = items.begin(); i != items.end(); i++) {
+            s += (*i)->toString() + ", ";
+        }
+        s.erase(s.size()-2, 2);
+    } else {
+        s += "<>";
+    }
+    s += ">";
+    return s;
 }
 
 // Getters and Setters
