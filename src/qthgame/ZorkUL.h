@@ -7,6 +7,7 @@
 #include "Item.h"
 #include "Gateway.h"
 #include "Player.h"
+#include "Event.h"
 
 using namespace std;
 
@@ -17,17 +18,20 @@ class ZorkUL {
         Room *currentRoom;
         vector<Room*> rooms;
         vector<Gateway*> gateways;
+        vector<Event*> events;
+        bool changedRoom;
         void createGame();
+        void createEvents();
         void printWelcome();
-        int actionIO(string message, vector<string> options);
+        Event::Option* eventIO(string message, Event* event);
         string getMessage();
-        vector<string> getOptions(); // create Action, change string to Action
-        void doAction(int choice);
-
+        Event* getEvent();
         void changeRoom(Gateway* gateway);
+        void performOption(Event::Option* option);
 
     public:
         ZorkUL();
+        ~ZorkUL();
         void play();
 
 };

@@ -7,9 +7,20 @@
 
 using namespace std;
 
-ZorkUL::ZorkUL() : p("Main Character"){
+ZorkUL::ZorkUL() : p("Main Character"), changedRoom(true) {
     createGame();
-    cout << p.toString() << endl;
+}
+
+ZorkUL::~ZorkUL() {
+    for (vector<Room*>::iterator i = rooms.begin(); i != rooms.end(); i++) {
+        delete (*i);
+    }
+    for (vector<Gateway*>::iterator i = gateways.begin(); i != gateways.end(); i++) {
+        delete (*i);
+    }
+    for (auto i = events.begin(); i != events.end(); i++) {
+        delete (*i);
+    }
 }
 
 void ZorkUL::createGame() {
@@ -62,7 +73,33 @@ void ZorkUL::createGame() {
     gateways.push_back(new Gateway(11, c6, c7));
     gateways.push_back(new Gateway(12, c6, r7));
 
+    createEvents();
+
     currentRoom = r1;
+}
+
+void ZorkUL::createEvents() {
+    Event *e = new Event("Cela");
+    e->addOption(new Event::Option(0, "Pass through door"));
+    events.push_back(e);
+
+    e = new Event("Salinha");
+    e->addOption(new Event::Option(1, "Go to the cell"));
+    e->addOption(new Event::Option(2, "Go through the other door"));
+    events.push_back(e);
+
+    e = new Event("Corredor 1");
+    e->addOption(new Event::Option(3, "Check the plant"));
+    e->addOption(new Event::Option(4, "Go back to the cell room"));
+    e->addOption(new Event::Option(5, "Go through the door on your right"));
+    e->addOption(new Event::Option(6, "Continue in the corridor"));
+    events.push_back(e);
+
+    e = new Event("Corredor 2");
+    e->addOption(new Event::Option(7, "Go to the door on your left"));
+    e->addOption(new Event::Option(8, "Go to the door on your right"));
+    e->addOption(new Event::Option(9, "Go back in the corridor"));
+    events.push_back(e);
 }
 
 /**
@@ -73,10 +110,16 @@ void ZorkUL::play() {
 
     bool finished = false;
     while (!finished) {
-        string m = getMessage();
-        vector<string> o = getOptions();
-        int action = actionIO(m, o);
-        doAction(action);
+        string m;
+        if (changedRoom) {
+            m = getMessage();
+        } else {
+            m = "";
+        }
+        Event* e = getEvent();
+        Event::Option* option = eventIO(m, e);
+        changedRoom = false;
+        performOption(option);
     }
     cout << endl;
     cout << "end" << endl;
@@ -93,24 +136,29 @@ void ZorkUL::changeRoom(Gateway* gateway) {
     // Try to leave current room.
     Room* nextRoom = gateway->getOtherRoom(currentRoom);
 
-    if (nextRoom == NULL)
-        return;
-    else {
+    if (nextRoom != NULL) {
+        changedRoom = true;
         currentRoom = nextRoom;
-        cout << currentRoom->toString() << endl;
+        //cout << currentRoom->toString() << endl;
     }
 }
 
-int ZorkUL::actionIO(string message, vector<string> options) {
-    cout << message << endl;
+Event::Option* ZorkUL::eventIO(string message, Event* event) {
+    if (message != "") {
+        cout << message << endl;
+    }
+    if (event->getMessage() != "") {
+        cout << event->getMessage() << endl;
+    }
+    auto options = event->getOptions();
     for (unsigned int i=0; i < options.size(); i++) {
-        cout << i+1 << ". " << options[i] << endl;
+        cout << i+1 << ". " << options[i]->label << endl;
     }
     cout << "> ";
     int r;
     cin >> r;
     cout << endl;
-    return r;
+    return options.at(r-1);
 }
 
 string ZorkUL::getMessage() {
@@ -118,45 +166,56 @@ string ZorkUL::getMessage() {
     return m;
 }
 
-vector<string> ZorkUL::getOptions() {
-    vector<string> o;
+Event* ZorkUL::getEvent() {
     if (currentRoom == ROOM(1)) {
-        o.push_back("Pass through door");
+        return events[0];
     } else if (currentRoom == ROOM(2)) {
-        o.push_back("Go to the cell");
-        o.push_back("Go through the other door");
+        return events[1];
     } else if (currentRoom == CORR(1)) {
-        o.push_back("Check plant");
-        o.push_back("Go back to the cell room");
-        o.push_back("Go through the door on your right.");
-        o.push_back("Continue in the corridor");
+        return events[2];
     } else if (currentRoom == CORR(2)) {
-        o.push_back("Go to the door on your left");
-        o.push_back("Go to the door on your right");
-        o.push_back("Go back in the corridor");
-    } else {
-        o.push_back("Ooops... seems like the game have a problem...");
+        return events[3];
     }
-
-    return o;
+    return NULL;
 }
 
-void ZorkUL::doAction(int choice) {
-    if (currentRoom == ROOM(1)) {
-        if (choice == 1) {changeRoom(gateways[0]);}
-    } else if (currentRoom == ROOM(2)) {
-        if (choice == 1) {changeRoom(gateways[0]);}
-        else if (choice == 2) {changeRoom(gateways[1]);}
-    } else if (currentRoom == CORR(1)) {
-        if (choice == 1) {cout << "You checked the plant, UHUUUUL!" << endl; p.addItem(new Item(0, "key", "old key")); p.addItem(new Item(1, "b key", "old b key")); cout << p.toString() << endl;}
-        else if (choice == 2) {changeRoom(gateways[1]);}
-        else if (choice == 3) {cout << "Door is locked." << endl;}
-        else if (choice == 4) {changeRoom(gateways[2]);}
-    } else if (currentRoom == CORR(2)) {
-        if (choice == 1) {cout << "Door is locked." << endl;}
-        else if (choice == 2) {cout << "Door is locked." << endl;}
-        else if (choice == 3) {changeRoom(gateways[2]);}
-    } else {
-        cout << "Shit happens..." << endl;
+void ZorkUL::performOption(Event::Option* option) {
+    switch (option->id) {
+        case 0:
+            changeRoom(gateways[0]);
+            break;
+        case 1:
+            changeRoom(gateways[0]);
+            break;
+        case 2:
+            changeRoom(gateways[1]);
+            break;
+        case 3:
+            cout << "You checked the plant, UHUUUUL!" << endl;
+            p.addItem(new Item(0, "key", "old key"));
+            p.addItem(new Item(1, "b key", "old b key"));
+            cout << p.toString() << endl;
+            break;
+        case 4:
+            changeRoom(gateways[1]);
+            break;
+        case 5:
+            cout << "Door is locked." << endl;
+            break;
+        case 6:
+            changeRoom(gateways[2]);
+            break;
+        case 7:
+            cout << "Door is locked." << endl;
+            break;
+        case 8:
+            cout << "Door is locked." << endl;
+            break;
+        case 9:
+            changeRoom(gateways[2]);
+            break;
+        default:
+            cout << "Shit happens..." << endl;
+            break;
     }
 }

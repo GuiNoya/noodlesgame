@@ -20,7 +20,8 @@ SOURCES += main.cpp\
     GameWindow.cpp \
     Item.cpp \
     Gateway.cpp \
-    Player.cpp
+    Player.cpp \
+    Event.cpp
 
 HEADERS  += \
     Room.h \
@@ -28,4 +29,5 @@ HEADERS  += \
     GameWindow.h \
     Item.h \
     Gateway.h \
-    Player.h
+    Player.h \
+    Event.h
