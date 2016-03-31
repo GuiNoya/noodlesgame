@@ -1,10 +1,18 @@
 #include "Player.h"
 
-Player::Player(string name) : name(name){
+Player::Player(string name, QRect rect, string filename) : name(name), rect(rect), image(ASSET(filename)){
 }
 
 string Player::getName() {
     return this->name;
+}
+
+QRect Player::getRect() {
+    return rect;
+}
+
+QImage& Player::getImage() {
+    return image;
 }
 
 void Player::addItem(Item *item) {
@@ -17,6 +25,16 @@ void Player::removeItem(Item *item) {
             inventory.erase(i);
         }
     }
+}
+
+void Player::update(Room* currentRoom) {
+    QRect rr = currentRoom->getRect();
+    QPoint pos = currentRoom->getPlayerPosition();
+    pos.rx() += rr.left();
+    pos.ry() += rr.top();
+    rect.setTopLeft(pos);
+    rect.setWidth(40);
+    rect.setHeight(25);
 }
 
 string Player::toString() {

@@ -3,6 +3,10 @@
 Room::Room(string name, string description) : name(name), description(description){
 }
 
+Room::Room(string name, string description, QRect rect, string filename, int x, int y) :
+    name(name), description(description), rect(rect), image(ASSET(filename)), playerPosition(x, y) {
+}
+
 string Room::toString() {
     string s = "<Room Name=" + name + ", Description=" + description + ", Items=";
     if (items.size() > 0 ) {
@@ -26,12 +30,44 @@ string Room::getDescription() {
     return description;
 }
 
+vector<Item*> Room::getItems() {
+    return items;
+}
+
+vector<Room*> Room::getViewableRooms() {
+    return viewableRooms;
+}
+
+QRect Room::getRect() {
+    return rect;
+}
+
+QImage& Room::getImage() {
+    return image;
+}
+
+QPoint Room::getPlayerPosition() {
+    return playerPosition;
+}
+
 void Room::setName(string name) {
     this->name = name;
 }
 
 void Room::setDescription(string description) {
     this->description = description;
+}
+
+void Room::addGateway(Gateway* gateway) {
+    this->gateways.push_back(gateway);
+}
+
+void Room::addViewableRoom(Room *room) {
+    viewableRooms.push_back(room);
+}
+
+void Room::addViewableRooms(initializer_list<Room*> rooms) {
+    for (auto r : rooms) viewableRooms.push_back(r);
 }
 
 // Item related
@@ -66,7 +102,7 @@ bool Room::removeItem(int id) {
 }
 
 bool Room::isItemInRoom(Item *item) {
-    for (int i=items.size(); i >= 0; --i) {
+    for (int i=items.size()-1; i >= 0; --i) {
         if (items[i] == item) {
             return true;
         }
@@ -75,7 +111,7 @@ bool Room::isItemInRoom(Item *item) {
 }
 
 bool Room::isItemInRoom(int id) {
-    for (int i=items.size(); i >= 0; --i) {
+    for (int i=items.size()-1; i >= 0; --i) {
         if (items[i]->getId() == id) {
             return true;
         }
@@ -99,4 +135,3 @@ string Room::displayItems() {
 int Room::numberOfItems() {
     return items.size();
 }
-

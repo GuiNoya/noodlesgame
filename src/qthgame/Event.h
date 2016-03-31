@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 
 using namespace std;
 
@@ -16,15 +17,23 @@ class Event {
             Option(int id, string label) : id(id), label(label) {}
         };
 
-        Event(string message);
+        Event(int id, string message);
         ~Event();
+        string getId();
         string getMessage();
         vector<Option*> getOptions();
+        void setMessage(string s);
         void addOption(Option *option);
+        void disableOption(int o);
+        void disableOption(Option* o);
+        void reenableOption(int o);
+        void reenableOption(Option* o);
 
     private:
+        int id;
         string message;
         vector<Option*> options;
+        map<int, Option*> disabledOptions;
 
 };
 

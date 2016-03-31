@@ -14,10 +14,11 @@ TEMPLATE = app
 CONFIG += c++11
 CONFIG += console
 
+QMAKE_CXXFLAGS += -Winline
+
 SOURCES += main.cpp\
     Room.cpp \
     ZorkUL.cpp \
-    GameWindow.cpp \
     Item.cpp \
     Gateway.cpp \
     Player.cpp \
@@ -26,8 +27,12 @@ SOURCES += main.cpp\
 HEADERS  += \
     Room.h \
     ZorkUL.h \
-    GameWindow.h \
     Item.h \
     Gateway.h \
     Player.h \
-    Event.h
+    Event.h \
+    Defines.h
+
+DISTFILES +=
+
+RESOURCES +=
