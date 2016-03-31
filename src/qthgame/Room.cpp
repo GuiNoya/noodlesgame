@@ -125,7 +125,7 @@ string Room::displayItems() {
     for (int i=0; i < size; i++) {
         tempString += i+1;
         tempString += ": ";
-        //tempString += items[i]->toString();
+        tempString += items[i]->toString();
         tempString += ", ";
     }
     tempString.erase(tempString.npos-1);

@@ -36,27 +36,15 @@ class ZorkUL : public QMainWindow {
         void createGame();
         void createEvents();
         void printWelcome();
-        Event::Option* eventIO(string message, Event* event);
         string getMessage();
-        Event* getEvent();
         void changeRoom(Gateway* gateway);
         Room* transit(Room* origin, Room* dest);
         void performOption(Event::Option* option);
 
         QTimer* timer;
 
-        inline void createGateway(int id, Room* r1, Room* r2) __attribute__((always_inline)) { // Could also be a macro
-            Gateway* g = new Gateway(id, r1, r2);
-            gateways.push_back(g);
-            r1->addGateway(g);
-            r2->addGateway(g);
-        }
-
-        inline void drawItems(QPainter& painter, vector<Item*> items) {
-            for (Item* i : items) {
-                painter.drawImage(i->getRect(), i->getImage());
-            }
-        }
+        inline void createGateway(int id, Room* r1, Room* r2) __attribute__((always_inline));
+        inline void drawItems(QPainter& painter, vector<Item*> items);
 
     protected:
         void paintEvent(QPaintEvent* e) Q_DECL_OVERRIDE;

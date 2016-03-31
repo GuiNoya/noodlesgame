@@ -13,7 +13,7 @@ ZorkUL::ZorkUL(QWidget *parent) : QMainWindow(parent), p("Main Character", QRect
     setFixedSize(1100, 600);
 
     timer = new QTimer();
-    connect(timer, SIGNAL(timeout()), this, SLOT(animate()));
+    //connect(timer, SIGNAL(timeout()), this, SLOT(repaint()));
 }
 
 ZorkUL::~ZorkUL() {
@@ -92,6 +92,8 @@ void ZorkUL::createGame() {
 
     createEvents();
 
+    items.push_back(new Item(0, "i", "d"));
+
     currentRoom = r1;
     _SE 0;
 }
@@ -125,26 +127,8 @@ void ZorkUL::createEvents() {
  */
 void ZorkUL::play() {
     printWelcome();
-#ifndef CONSOLE_INPUT
     _SE events[0];
     show();
-#else
-    bool finished = false;
-    while (!finished) {
-        string m;
-        if (changedRoom) {
-            m = getMessage();
-        } else {
-            m = "";
-        }
-        Event* e = getEvent();
-        Event::Option* option = eventIO(m, e);
-        changedRoom = false;
-        performOption(option);
-    }
-    cout << endl;
-    cout << "end" << endl;
-#endif
 }
 
 void ZorkUL::printWelcome() {
@@ -164,46 +148,9 @@ void ZorkUL::changeRoom(Gateway* gateway) {
     }
 }
 
-#ifdef CONSOLE_INPUT
-Event::Option* ZorkUL::eventIO(string message, Event* event) {
-    if (message != "") {
-        cout << message << endl;
-    }
-    if (event->getMessage() != "") {
-        cout << event->getMessage() << endl;
-    }
-    auto options = event->getOptions();
-    for (unsigned int i=0; i < options.size(); i++) {
-        cout << i+1 << ". " << options[i]->label << endl;
-    }
-    cout << "> ";
-    int r;
-    cin >> r;
-    cout << endl;
-    return options.at(r-1);
-}
-#endif
-
 string ZorkUL::getMessage() {
     string m = currentRoom->getDescription();
     return m;
-}
-
-Event* ZorkUL::getEvent() {
-    if (!showingEvent) {
-        _SE events[0];
-    }
-
-    /*if (currentRoom == ROOM(1)) {
-        showingEvent = events[0];
-    } else if (currentRoom == ROOM(2)) {
-        showingEvent = events[1];
-    } else if (currentRoom == CORR(1)) {
-        showingEvent = events[2];
-    } else if (currentRoom == CORR(2)) {
-        showingEvent = events[3];
-    }*/
-    return NULL;
 }
 
 void ZorkUL::performOption(Event::Option* option) {
@@ -259,6 +206,19 @@ void ZorkUL::performOption(Event::Option* option) {
         default:
             cout << "Shit happens..." << endl;
             break;
+    }
+}
+
+inline void ZorkUL::createGateway(int id, Room* r1, Room* r2) {
+    Gateway* g = new Gateway(id, r1, r2);
+    gateways.push_back(g);
+    r1->addGateway(g);
+    r2->addGateway(g);
+}
+
+inline void ZorkUL::drawItems(QPainter& painter, vector<Item*> items) {
+    for (Item* i : items) {
+        painter.drawImage(i->getRect(), i->getImage());
     }
 }
 
@@ -318,13 +278,6 @@ void ZorkUL::paintEvent(QPaintEvent* e) {
 
 void ZorkUL::mouseReleaseEvent(QMouseEvent* e) {
     cout << "Button:" << e->button() << "  x:" << e->x() << "  y:" << e->y() << endl;
-    /*if (e->button() == Qt::LeftButton) {
-        for (auto i = rooms.begin(); i != rooms.end(); i++) {
-            //if ((i*)->getRect().contains(e->pos())) {
-            //}
-        }
-    }
-    repaint();*/
 }
 
 void ZorkUL::keyPressEvent(QKeyEvent *e) {
@@ -333,7 +286,6 @@ void ZorkUL::keyPressEvent(QKeyEvent *e) {
         changedRoom = false;
         Event::Option* option = options[e->key() - Qt::Key_1];
         performOption(option);
-        //getEvent();
         repaint();
     } else {
         cout << "key is not an option" << endl;
@@ -346,3 +298,4 @@ void ZorkUL::animate() {
 
 #undef ROOM
 #undef CORR
+#undef _SE

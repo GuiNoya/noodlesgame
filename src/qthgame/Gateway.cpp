@@ -1,7 +1,7 @@
 #include "Gateway.h"
 
-Gateway::Gateway(int id, Room* room1, Room* room2, /*int x, int y,*/ bool locked/*=false*/)
-    : id(id), locked(locked)/*, rect(x, y, 15, 40)*/ {
+Gateway::Gateway(int id, Room* room1, Room* room2, bool locked/*=false*/)
+    : id(id), locked(locked) {
     this->rooms[0] = room1;
     this->rooms[1] = room2;
 }
@@ -26,10 +26,6 @@ bool Gateway::isLocked() {
     return locked;
 }
 
-/*QRect Gateway::getRect() {
-    return rect;
-}*/
-
 Room* Gateway::getOtherRoom(Room* currentRoom) {
     if (!this->locked) {
         if (currentRoom == rooms[0]) {
@@ -37,7 +33,6 @@ Room* Gateway::getOtherRoom(Room* currentRoom) {
         } else if (currentRoom == rooms[1]) {
             return rooms[0];
         }
-        //return (currentRoom == rooms[0]) ? rooms[1] : (currentRoom == rooms[1] ? rooms[0] : NULL);
     }
     return NULL;
 }
