@@ -95,12 +95,8 @@ void ZorkUL::createGame() {
     items.push_back(new Item(0, "i", "d"));
 
     currentRoom = r1;
-<<<<<<< HEAD
     _SE events[1];
-=======
-    _SE 0;
     p.setPosition(currentRoom->getPlayerPositionAbs());
->>>>>>> playerAnimation
 }
 
 void ZorkUL::createEvents() {
@@ -1161,14 +1157,8 @@ void ZorkUL::paintEvent(QPaintEvent* e) {
     string m = showingEvent->getMessage();
     painter.drawText(tRect, Qt::AlignHCenter | Qt::TextWordWrap, QString::fromStdString(m));
 
-<<<<<<< HEAD
-    cout << m << endl;
-
     painter.setPen(QColor::fromRgb(204,255,255));
     tRect.translate(0, 370);
-=======
-    tRect.translate(0, 280);
->>>>>>> playerAnimation
     auto options = showingEvent->getOptions();
     string s;
     for (unsigned int i=0; i < options.size(); i++) {
