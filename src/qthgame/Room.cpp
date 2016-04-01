@@ -46,8 +46,8 @@ QImage& Room::getImage() {
     return image;
 }
 
-QPoint Room::getPlayerPosition() {
-    return playerPosition;
+QPoint Room::getPlayerPositionAbs() {
+    return rect.topLeft() + playerPosition;
 }
 
 void Room::setName(string name) {
