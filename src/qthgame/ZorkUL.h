@@ -41,6 +41,8 @@ class ZorkUL : public QMainWindow {
         void performOption(Event::Option* option);
 
         QTimer* timer;
+        static constexpr double ANIMATION_STEP = 0.05;
+        static const int ANIMATION_DELAY = 100;
 
         inline void createGateway(int id, Room* r1, Room* r2) __attribute__((always_inline));
         inline void drawItems(QPainter& painter, vector<Item*> items);
@@ -60,7 +62,7 @@ class ZorkUL : public QMainWindow {
         ZorkUL(QWidget *parent = 0);
         ~ZorkUL();
         void play();
-        static const unsigned short DRAW_PER_SECOND = 30;
+        //static const unsigned short DRAW_PER_SECOND = 30;
 
 };
 

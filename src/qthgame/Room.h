@@ -38,7 +38,7 @@ class Room {
         vector<Room*> getViewableRooms();
         QRect getRect();
         QImage& getImage();
-        QPoint getPlayerPosition();
+        QPoint getPlayerPositionAbs();
         void setName(string name);
 
         void addGateway(Gateway* gateway);

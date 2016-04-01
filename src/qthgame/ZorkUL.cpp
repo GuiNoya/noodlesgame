@@ -6,14 +6,14 @@
 
 using namespace std;
 
-ZorkUL::ZorkUL(QWidget *parent) : QMainWindow(parent), p("Main Character", QRect(0, 0, 25, 25), "player.png"), changedRoom(true) {
+ZorkUL::ZorkUL(QWidget *parent) : QMainWindow(parent), p("Main Character", 0, 0, "player.png"), changedRoom(true) {
     createGame();
     setWindowTitle(QString::fromUtf8("Horror/Action/Turn game written in C++ and Qt!!!"));
     setStyleSheet("background-color:black;");
     setFixedSize(1100, 600);
 
     timer = new QTimer();
-    //connect(timer, SIGNAL(timeout()), this, SLOT(repaint()));
+    connect(timer, SIGNAL(timeout()), this, SLOT(animate()));
 }
 
 ZorkUL::~ZorkUL() {
@@ -95,7 +95,12 @@ void ZorkUL::createGame() {
     items.push_back(new Item(0, "i", "d"));
 
     currentRoom = r1;
+<<<<<<< HEAD
     _SE events[1];
+=======
+    _SE 0;
+    p.setPosition(currentRoom->getPlayerPositionAbs());
+>>>>>>> playerAnimation
 }
 
 void ZorkUL::createEvents() {
@@ -1035,7 +1040,7 @@ void ZorkUL::changeRoom(Gateway* gateway) {
     if (nextRoom != NULL) {
         changedRoom = true;
         currentRoom = nextRoom;
-        //timer->start(DRAW_PER_SECOND/60);
+        timer->start(ANIMATION_DELAY);
     }
 }
 
@@ -1146,7 +1151,6 @@ void ZorkUL::paintEvent(QPaintEvent* e) {
         painter.drawPixmap(room->getRect(), origOverlay);
     }
 
-    p.update(currentRoom);
     painter.drawImage(p.getRect(), p.getImage());
 
     QFont font = painter.font();
@@ -1157,17 +1161,25 @@ void ZorkUL::paintEvent(QPaintEvent* e) {
     string m = showingEvent->getMessage();
     painter.drawText(tRect, Qt::AlignHCenter | Qt::TextWordWrap, QString::fromStdString(m));
 
+<<<<<<< HEAD
     cout << m << endl;
 
     painter.setPen(QColor::fromRgb(204,255,255));
     tRect.translate(0, 370);
+=======
+    tRect.translate(0, 280);
+>>>>>>> playerAnimation
     auto options = showingEvent->getOptions();
     string s;
     for (unsigned int i=0; i < options.size(); i++) {
         s += to_string(i + 1) + ". " + options[i]->label + "\n";
     }
     painter.drawText(tRect, Qt::AlignJustify | Qt::TextWordWrap, QString::fromStdString(s));
+
+#ifdef CONSOLE_OUTPUT
+    cout << m << endl;
     cout << s << endl;
+#endif
 
 }
 
@@ -1176,19 +1188,28 @@ void ZorkUL::mouseReleaseEvent(QMouseEvent* e) {
 }
 
 void ZorkUL::keyPressEvent(QKeyEvent *e) {
-    vector<Event::Option*> options = showingEvent->getOptions();
-    if ((e->key() > Qt::Key_0) && (e->key() < (int) (Qt::Key_1 + options.size()))) {
-        changedRoom = false;
-        Event::Option* option = options[e->key() - Qt::Key_1];
-        performOption(option);
-        repaint();
-    } else {
-        cout << "key is not an option" << endl;
+    if (!p.isMoving()) {
+        vector<Event::Option*> options = showingEvent->getOptions();
+        if ((e->key() > Qt::Key_0) && (e->key() < (int) (Qt::Key_1 + options.size()))) {
+            changedRoom = false;
+            Event::Option* option = options[e->key() - Qt::Key_1];
+            performOption(option);
+            repaint();
+        } else {
+            cout << "key is not an option" << endl;
+        }
     }
 }
 
 void ZorkUL::animate() {
-
+    if (!p.isMoving()) {
+        p.setAnimation(currentRoom->getPlayerPositionAbs(), ANIMATION_STEP);
+    }
+    bool finished = p.update();
+    if (finished) {
+        timer->stop();
+    }
+    repaint();
 }
 
 #undef ROOM
