@@ -21,7 +21,6 @@ class Room {
 
     private:
         string name;
-        string description;
         vector<Item*> items;
         vector<Gateway*> gateways;
         vector<Room*> viewableRooms;
@@ -30,19 +29,17 @@ class Room {
         QPoint playerPosition;
 
     public:
-        Room(string name, string description);
-        Room(string name, string description, QRect rect, string filename, int x, int y);
+        Room(string name);
+        Room(string name, QRect rect, string filename, int x, int y);
         string toString();
 
         string getName();
-        string getDescription();
         vector<Item*> getItems();
         vector<Room*> getViewableRooms();
         QRect getRect();
         QImage& getImage();
         QPoint getPlayerPosition();
         void setName(string name);
-        void setDescription(string description);
 
         void addGateway(Gateway* gateway);
         void addViewableRoom(Room* room);

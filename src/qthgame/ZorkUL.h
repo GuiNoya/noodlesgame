@@ -36,7 +36,6 @@ class ZorkUL : public QMainWindow {
         void createGame();
         void createEvents();
         void printWelcome();
-        string getMessage();
         void changeRoom(Gateway* gateway);
         Room* transit(Room* origin, Room* dest);
         void performOption(Event::Option* option);
@@ -45,6 +44,8 @@ class ZorkUL : public QMainWindow {
 
         inline void createGateway(int id, Room* r1, Room* r2) __attribute__((always_inline));
         inline void drawItems(QPainter& painter, vector<Item*> items);
+        inline void EVENT(int id, string message, initializer_list<Event::Option*> list);
+        inline Event::Option* OPTION(int id, string message);
 
     protected:
         void paintEvent(QPaintEvent* e) Q_DECL_OVERRIDE;

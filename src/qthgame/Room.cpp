@@ -1,14 +1,14 @@
 #include "Room.h"
 
-Room::Room(string name, string description) : name(name), description(description){
+Room::Room(string name) : name(name){
 }
 
-Room::Room(string name, string description, QRect rect, string filename, int x, int y) :
-    name(name), description(description), rect(rect), image(ASSET(filename)), playerPosition(x, y) {
+Room::Room(string name, QRect rect, string filename, int x, int y) :
+    name(name), rect(rect), image(ASSET(filename)), playerPosition(x, y) {
 }
 
 string Room::toString() {
-    string s = "<Room Name=" + name + ", Description=" + description + ", Items=";
+    string s = "<Room Name=" + name + ", Items=";
     if (items.size() > 0 ) {
         for (vector<Item*>::iterator i = items.begin(); i != items.end(); i++) {
             s += (*i)->toString() + ", ";
@@ -24,10 +24,6 @@ string Room::toString() {
 // Getters and Setters
 string Room::getName() {
     return name;
-}
-
-string Room::getDescription() {
-    return description;
 }
 
 vector<Item*> Room::getItems() {
@@ -52,10 +48,6 @@ QPoint Room::getPlayerPosition() {
 
 void Room::setName(string name) {
     this->name = name;
-}
-
-void Room::setDescription(string description) {
-    this->description = description;
 }
 
 void Room::addGateway(Gateway* gateway) {
