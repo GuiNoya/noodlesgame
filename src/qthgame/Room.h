@@ -24,6 +24,7 @@ class Room {
         vector<Item*> items;
         vector<Gateway*> gateways;
         vector<Room*> viewableRooms;
+        bool visible = false;
         QRect rect;
         QImage image;
         QPoint playerPosition;
@@ -39,7 +40,9 @@ class Room {
         QRect getRect();
         QImage& getImage();
         QPoint getPlayerPositionAbs();
+        bool isVisible();
         void setName(string name);
+        void setVisible(bool visible);
 
         void addGateway(Gateway* gateway);
         void addViewableRoom(Room* room);

@@ -46,8 +46,16 @@ QPoint Room::getPlayerPositionAbs() {
     return rect.topLeft() + playerPosition;
 }
 
+bool Room::isVisible() {
+    return visible;
+}
+
 void Room::setName(string name) {
     this->name = name;
+}
+
+void Room::setVisible(bool visible) {
+    this->visible = visible;
 }
 
 void Room::addGateway(Gateway* gateway) {
