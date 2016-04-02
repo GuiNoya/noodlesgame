@@ -26,6 +26,7 @@ class ZorkUL : public QMainWindow {
     private:
         Player p;
         Room *currentRoom;
+        Room *destRoom;
         Event *showingEvent;
         vector<Room*> rooms;
         vector<Gateway*> gateways;

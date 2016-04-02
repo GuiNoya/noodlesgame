@@ -94,6 +94,7 @@ void ZorkUL::createGame() {
 
     items.push_back(new Item(0, "i", "d"));
 
+    r1->setVisible(true);
     currentRoom = r1;
     _SE events[1];
     p.setPosition(currentRoom->getPlayerPositionAbs());
@@ -1035,12 +1036,20 @@ void ZorkUL::changeRoom(Gateway* gateway) {
 
     if (nextRoom != NULL) {
         changedRoom = true;
-        currentRoom = nextRoom;
+        destRoom = nextRoom;
         timer->start(ANIMATION_DELAY);
     }
 }
 
 void ZorkUL::performOption(Event::Option* option) {
+    if (currentRoom == ROOM(1)) {
+        changeRoom(gateways[0]);
+        _SE events[1];
+    } else {
+        changeRoom(gateways[1]);
+        _SE events[2];
+    }
+    return;
     switch (option->id) {
         case 0:
             changeRoom(gateways[0]);
@@ -1125,46 +1134,53 @@ void ZorkUL::paintEvent(QPaintEvent* e) {
 
     QPainter painter(this);
 
-    vector<Room*> darkRooms = rooms;
-
-    FINDREMOVE(darkRooms, currentRoom)
-    painter.drawImage(currentRoom->getRect(), currentRoom->getImage());
-    drawItems(painter, currentRoom->getItems());
-    for (Room* room : currentRoom->getViewableRooms()) {
+    // Draw every room
+    for (Room* room : rooms) {
         painter.drawImage(room->getRect(), room->getImage());
         drawItems(painter, room->getItems());
-        FINDREMOVE(darkRooms, room)
     }
 
-    for (Room*& room : darkRooms) {
-        QImage src = room->getImage();
-        painter.drawImage(room->getRect(), src);
-        drawItems(painter, room->getItems());
+    // Draw the overlays
+    for (Room* room : rooms) { // The separate loop is to draw items below all overlays
+        if (room == currentRoom || room == destRoom) continue;
+        vector<Room*> vRooms = currentRoom->getViewableRooms();
+        bool isVR = false;
+        for (auto r = vRooms.begin(); r != vRooms.end(); r++) {
+            if (*r == room) isVR = true;
+        }
+        if (isVR) continue;
+
+        if (room->isVisible()) {
+            static const QPixmap overlay(ASSET((string) "light-overlay.png"));
+            painter.drawPixmap(room->getRect(), overlay);
+        } else {
+            static const QPixmap overlay(ASSET((string)"overlay.png"));
+            painter.drawPixmap(room->getRect(), overlay);
+        }
     }
 
-    for (Room*& room : darkRooms) { // Separate loop to draw items below all the overlays correctly
-        static const QPixmap origOverlay(ASSET((string)"overlay.png"));
-        painter.drawPixmap(room->getRect(), origOverlay);
-    }
-
+    // Draw player
     painter.drawImage(p.getRect(), p.getImage());
 
-    QFont font = painter.font();
-    font.setPixelSize(20);
-    painter.setFont(font);
-    painter.setPen(QColor::fromRgb(255,255,204));
-    QRect tRect(810, 20, 280, 350);
-    string m = showingEvent->getMessage();
-    painter.drawText(tRect, Qt::AlignHCenter | Qt::TextWordWrap, QString::fromStdString(m));
+    // If not in movement, draw the text
+    if (!timer->isActive()) {
+        QFont font = painter.font();
+        font.setPixelSize(20);
+        painter.setFont(font);
+        painter.setPen(QColor::fromRgb(255,255,204));
+        QRect tRect(810, 20, 280, 350);
+        string m = showingEvent->getMessage();
+        painter.drawText(tRect, Qt::AlignHCenter | Qt::TextWordWrap, QString::fromStdString(m));
 
-    painter.setPen(QColor::fromRgb(204,255,255));
-    tRect.translate(0, 370);
-    auto options = showingEvent->getOptions();
-    string s;
-    for (unsigned int i=0; i < options.size(); i++) {
-        s += to_string(i + 1) + ". " + options[i]->label + "\n";
+        painter.setPen(QColor::fromRgb(204,255,255));
+        tRect.translate(0, 370);
+        auto options = showingEvent->getOptions();
+        string s;
+        for (unsigned int i=0; i < options.size(); i++) {
+            s += to_string(i + 1) + ". " + options[i]->label + "\n";
+        }
+        painter.drawText(tRect, Qt::AlignJustify | Qt::TextWordWrap, QString::fromStdString(s));
     }
-    painter.drawText(tRect, Qt::AlignJustify | Qt::TextWordWrap, QString::fromStdString(s));
 
 #ifdef CONSOLE_OUTPUT
     cout << m << endl;
@@ -1178,7 +1194,7 @@ void ZorkUL::mouseReleaseEvent(QMouseEvent* e) {
 }
 
 void ZorkUL::keyPressEvent(QKeyEvent *e) {
-    if (!p.isMoving()) {
+    if (!timer->isActive()) {
         vector<Event::Option*> options = showingEvent->getOptions();
         if ((e->key() > Qt::Key_0) && (e->key() < (int) (Qt::Key_1 + options.size()))) {
             changedRoom = false;
@@ -1193,11 +1209,18 @@ void ZorkUL::keyPressEvent(QKeyEvent *e) {
 
 void ZorkUL::animate() {
     if (!p.isMoving()) {
-        p.setAnimation(currentRoom->getPlayerPositionAbs(), ANIMATION_STEP);
+        p.setAnimation(destRoom->getPlayerPositionAbs(), ANIMATION_STEP);
     }
     bool finished = p.update();
     if (finished) {
         timer->stop();
+        if (destRoom != ROOM(3))
+            destRoom->setVisible(true);
+        for (auto r : destRoom->getViewableRooms()) {
+            r->setVisible(true);
+        }
+        currentRoom = destRoom;
+        destRoom = 0;
     }
     repaint();
 }
