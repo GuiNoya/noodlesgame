@@ -20,7 +20,6 @@ class Gateway {
         void setLocked(bool locked);
         bool isLocked();
         Room* getOtherRoom(Room* currentRoom);
-
 };
 
 #endif // GATEWAY_H

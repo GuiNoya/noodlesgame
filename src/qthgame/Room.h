@@ -52,7 +52,6 @@ class Room {
         bool isItemInRoom(int id);
         string displayItems();
         int numberOfItems();
-
 };
 
 #endif

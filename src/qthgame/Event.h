@@ -14,6 +14,7 @@ class Event {
         struct Option {
             int id;
             string label;
+            bool enabled = true;
             Option(int id, string label) : id(id), label(label) {}
         };
 
@@ -24,17 +25,13 @@ class Event {
         vector<Option*> getOptions();
         void setMessage(string s);
         void addOption(Option *option);
-        void disableOption(int o);
-        void disableOption(Option* o);
-        void reenableOption(int o);
-        void reenableOption(Option* o);
+        void disableOption(int i);
+        void enableOption(int i);
 
     private:
         int id;
         string message;
         vector<Option*> options;
-        map<int, Option*> disabledOptions;
-
 };
 
 #endif // ACTION_H

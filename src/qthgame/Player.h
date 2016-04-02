@@ -21,8 +21,8 @@ class Player {
         QPointF direction;
         QPoint dest;
         bool moving;
-        static const int PLAYER_HEIGHT = 40;
-        static const int PLAYER_WIDTH = 25;
+        static const int PLAYER_HEIGHT = 30;
+        static const int PLAYER_WIDTH = 30;
 
     public:
         Player(string name, int x, int y, string filename);
@@ -35,9 +35,9 @@ class Player {
         void setAnimation(const QPoint dest, double step);
         void addItem(Item *item);
         void removeItem(Item* item);
+        bool hasItem(Item* item);
         bool update();
         string toString();
-
 };
 
 #endif /*CHARACTER_H_*/

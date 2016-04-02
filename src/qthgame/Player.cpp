@@ -46,6 +46,13 @@ void Player::removeItem(Item *item) {
     }
 }
 
+bool Player::hasItem(Item *item){
+    for (vector<Item*>::iterator i = inventory.begin(); i != inventory.end(); i++) {
+        if ((*i) == item) return true;
+    }
+    return false;
+}
+
 bool Player::update() {
     if (moving) {
         QPointF diff = dest - rect.topLeft();

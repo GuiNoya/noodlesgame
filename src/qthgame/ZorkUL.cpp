@@ -6,9 +6,9 @@
 
 using namespace std;
 
-ZorkUL::ZorkUL(QWidget *parent) : QMainWindow(parent), p("Main Character", 0, 0, "player.png"), changedRoom(true) {
+ZorkUL::ZorkUL(QWidget *parent) : QMainWindow(parent), player("Main Character", 0, 0, "player.png"), changedRoom(true) {
     createGame();
-    setWindowTitle(QString::fromUtf8("Horror/Action/Turn game written in C++ and Qt!!!"));
+    setWindowTitle(QString::fromUtf8("Horror/Action/Turn Game, written in C++ and Qt!"));
     setStyleSheet("background-color:black;");
     setFixedSize(1100, 600);
 
@@ -27,13 +27,23 @@ ZorkUL::~ZorkUL() {
         delete i->second;
     }
     for (auto i = items.begin(); i != items.end(); i++) {
-        delete (*i);
+        delete i->second;
     }
 
     delete timer;
 }
 
 void ZorkUL::createGame() {
+    createRooms();
+    createEvents();
+    createItems();
+
+    currentRoom = ROOM(1);
+    _SE events[1];
+    player.setPosition(currentRoom->getPlayerPositionAbs());
+}
+
+void ZorkUL::createRooms() {
     Room *r1, *r2, *r3, *r4, *r5, *r6, *r7;
     Room *c1, *c2, *c3, *c4, *c5, *c6, *c7;
 
@@ -67,19 +77,19 @@ void ZorkUL::createGame() {
     rooms.push_back(c6);
     rooms.push_back(c7);
 
-    createGateway(0, r1, r2);
-    createGateway(1, r2, c1);
-    createGateway(2, c1, c2);
-    createGateway(3, c2, r3);
-    createGateway(4, r3, r7);
-    createGateway(5, c2, r4);
-    createGateway(6, c2, c3);
-    createGateway(7, c3, c4);
-    createGateway(8, c4, r5);
-    createGateway(9, c4, c5);
-    createGateway(10, c5, c6);
-    createGateway(11, c6, c7);
-    createGateway(12, c6, r6);
+    createGateway(0, r1, r2, true);
+    createGateway(1, r2, c1, false);
+    createGateway(2, c1, c2, false);
+    createGateway(3, c2, r3, false);
+    createGateway(4, r3, r7, true);
+    createGateway(5, c2, r4, true);
+    createGateway(6, c2, c3, false);
+    createGateway(7, c3, c4, false);
+    createGateway(8, c4, r5, false);
+    createGateway(9, c4, c5, false);
+    createGateway(10, c5, c6, false);
+    createGateway(11, c6, c7, false);
+    createGateway(12, c6, r6, true);
 
     r1->addViewableRoom(r2);
     r2->addViewableRoom(r1);
@@ -89,14 +99,6 @@ void ZorkUL::createGame() {
     c4->addViewableRooms({c1, c2, c3, c5, c6, c7});
     c5->addViewableRooms({c4, c6, c7});
     c6->addViewableRooms({c4, c6, c7});
-
-    createEvents();
-
-    items.push_back(new Item(0, "i", "d"));
-
-    currentRoom = r1;
-    _SE events[1];
-    p.setPosition(currentRoom->getPlayerPositionAbs());
 }
 
 void ZorkUL::createEvents() {
@@ -328,6 +330,8 @@ void ZorkUL::createEvents() {
         OPTION(25, "Enter room"),
         OPTION(82, "Enter room"),
         OPTION(23, "Check door on the left"),
+        OPTION(30, "Check door on the left"),
+        OPTION(69, "Check door on the left"),
         OPTION(21, "Go back on the corridor"),
         OPTION(26, "Continue down the hall")
         }
@@ -987,7 +991,7 @@ void ZorkUL::createEvents() {
               "YOU LOST", {}
     );
 
-    EVENT(98, "When you touches the knob, the door suddenly open. There is a man in a bloody apron in front of you.",
+    EVENT(98, "When you reach for the door, the door suddenly opens. There is a man in a bloody apron in front of you.",
         {
         OPTION(94, "Fight him"),
         OPTION(95, "Run to the corridor"),
@@ -1015,6 +1019,21 @@ void ZorkUL::createEvents() {
     );
 }
 
+
+void ZorkUL::createItems(){
+    items["pipe"] = new Item(0, "Pipe", "old broken pipe");
+    items["key"] = new Item(1, "Key", "");
+    items["scalpel"] = new Item(2, "Scalpel", "");
+    items["passcode"] = new Item(3, "Passcode", "piece of paper with 4 numbers");
+    items["flashlight"] = new Item(4, "Flashlight", "");
+
+    CORR(1)->addItem(items["pipe"]);
+    ROOM(5)->addItem(items["key"]);
+    ROOM(5)->addItem(items["scalpel"]);
+    ROOM(6)->addItem(items["passcode"]);
+    ROOM(4)->addItem(items["flashlight"]);
+}
+
 /**
  *  Main play routine.  Loops until end of play.
  */
@@ -1024,7 +1043,7 @@ void ZorkUL::play() {
 }
 
 void ZorkUL::printWelcome() {
-    cout << "start" << endl;
+    cout << "Start Game" << endl;
     cout << endl;
     cout << currentRoom->toString() << endl;
 }
@@ -1042,62 +1061,550 @@ void ZorkUL::changeRoom(Gateway* gateway) {
 
 void ZorkUL::performOption(Event::Option* option) {
     switch (option->id) {
-        case 0:
+        case 11:
+            gateways[0]->setLocked(false);
             changeRoom(gateways[0]);
-            _SE events[1];
             break;
-        case 1:
-            changeRoom(gateways[0]);
-            _SE events[0];
-            break;
-        case 2:
+        case 15:
             changeRoom(gateways[1]);
-            _SE events[2];
+            if (player.hasItem(items["pipe"])){
+                events[15]->disableOption(1);
+                events[15]->enableOption(2);
+            }
+            else{
+                events[15]->enableOption(1);
+                events[15]->disableOption(2);
+            }
             break;
-        case 3:
-            /*static bool status = false;
-            if (!status) {
-                cout << "You checked the plant, UHUUUUL!" << endl;
-                p.addItem(new Item(0, "key", "old key"));
-                p.addItem(new Item(1, "b key", "old b key"));
-                status = true;
+        case 16:
+            if (player.hasItem(items["pipe"])){
+                events[16]->disableOption(0);
+                events[16]->enableOption(1);
+            }
+            else{
+                events[16]->enableOption(0);
+                events[16]->disableOption(1);
+            }
+            break;
+        case 18:
+            changeRoom(gateways[0]);
+            break;
+        case 19:
+            if (enemyOnRoom4){
+                events[19]->disableOption(1);
+                events[19]->enableOption(2);
+                events[19]->disableOption(3);
+            }
+            else if (!player.hasItem(items["passcode"])){
+                events[19]->enableOption(1);
+                events[19]->disableOption(2);
+                events[19]->disableOption(3);
             } else {
-                cout << "You already have the items" << endl;
-            }*/
-            cout << "Checked plant" << endl;
-            p.addItem(items[0]);
-            events[2]->disableOption(option);
-            cout << p.toString() << endl;
-            break;
-        case 4:
-            changeRoom(gateways[1]);
-            _SE events[1];
-            break;
-        case 5:
-            cout << "Door is locked." << endl;
-            break;
-        case 6:
+                events[19]->disableOption(1);
+                events[19]->disableOption(2);
+                events[19]->enableOption(3);
+            }
+            if (hasReachedCorner){
+                events[19]->disableOption(5);
+                events[19]->enableOption(6);
+            } else {
+                events[19]->enableOption(5);
+                events[19]->disableOption(6);
+            }
             changeRoom(gateways[2]);
-            _SE events[3];
             break;
-        case 7:
-            cout << "Door is locked." << endl;
+        case 20:
+            player.addItem(items["pipe"]);
+            CORR(1)->removeItem(items["pipe"]);
             break;
-        case 8:
-            cout << "Door is locked." << endl;
+        case 21:
+            if (currentRoom == ROOM(2))
+                changeRoom(gateways[1]);
+            else if (currentRoom == CORR(2))
+                changeRoom(gateways[2]);
+            if (player.hasItem(items["pipe"]) | player.hasItem(items["passcode"])){
+                events[21]->disableOption(1);
+                events[21]->enableOption(2);
+            } else {
+                events[21]->enableOption(1);
+                events[21]->disableOption(2);
+            }
             break;
-        case 9:
-            changeRoom(gateways[2]);
-            _SE events[2];
+        case 22:
+            if (player.hasItem(items["flashlight"])){
+                events[22]->disableOption(0);
+                events[22]->enableOption(1);
+            } else {
+                events[22]->enableOption(0);
+                events[22]->disableOption(1);
+            }
+            if (enemyOnRoom4){
+                events[22]->disableOption(2);
+                events[22]->enableOption(3);
+                events[22]->disableOption(4);
+            }
+            else if (!player.hasItem(items["passcode"])){
+                events[22]->enableOption(2);
+                events[22]->disableOption(3);
+                events[22]->disableOption(4);
+            } else {
+                events[22]->disableOption(2);
+                events[22]->disableOption(3);
+                events[22]->enableOption(4);
+            }
             break;
-        default:
-            cout << "Shit happens..." << endl;
+        case 25:
+            if (player.hasItem(items["flashlight"])){
+                events[25]->disableOption(0);
+                events[25]->enableOption(1);
+            } else {
+                events[25]->enableOption(0);
+                events[25]->disableOption(1);
+            }
+            if (enemyOnRoom4){
+                events[25]->disableOption(2);
+                events[25]->enableOption(3);
+                events[25]->disableOption(4);
+            }
+            else if (!player.hasItem(items["passcode"])){
+                events[25]->enableOption(2);
+                events[25]->disableOption(3);
+                events[25]->disableOption(4);
+            } else {
+                events[25]->disableOption(2);
+                events[25]->disableOption(3);
+                events[25]->enableOption(4);
+            }
             break;
+        case 26:
+            changeRoom(gateways[6]);
+            if (player.hasItem(items["pipe"])){
+                events[26]->disableOption(0);
+                events[26]->enableOption(1);
+            } else {
+                events[26]->enableOption(0);
+                events[26]->disableOption(1);
+            }
+
+            break;
+        case 27:
+            gameOver = true;
+            break;
+        case 28:
+            enemyOnRoom4 = true;
+            break;
+        case 31:
+            changeRoom(gateways[6]);
+            break;
+        case 32:
+            gameOver = true;
+            break;
+        case 33:
+            gameOver = true;
+            break;
+        case 34:
+            enemyDown = true;
+            break;
+        case 35:
+            if (currentRoom == ROOM(4))
+                changeRoom(gateways[5]);
+            else if (currentRoom == ROOM(3))
+                changeRoom(gateways[3]);
+            else if (currentRoom == CORR(3))
+                changeRoom(gateways[6]);
+            if (enemyOnRoom4){
+                events[35]->disableOption(1);
+                events[35]->enableOption(2);
+                events[35]->disableOption(3);
+            }
+            else if (!player.hasItem(items["passcode"])){
+                events[35]->enableOption(1);
+                events[35]->disableOption(2);
+                events[35]->disableOption(3);
+            } else {
+                events[35]->disableOption(1);
+                events[35]->disableOption(2);
+                events[35]->enableOption(3);
+            }
+            break;
+        case 36:
+            changeRoom(gateways[7]);
+            break;
+        case 38:
+            if (currentRoom == CORR(2))
+                changeRoom(gateways[6]);
+            else if (currentRoom == CORR(4))
+                changeRoom(gateways[7]);
+            break;
+        case 39:
+            changeRoom(gateways[9]);
+            break;
+        case 40:
+            changeRoom(gateways[8]);
+            if (player.hasItem(items["key"])){
+                events[40]->disableOption(2);
+                events[40]->enableOption(3);
+            } else {
+                events[40]->enableOption(2);
+                events[40]->disableOption(3);
+            }
+            if (enemyReturn){
+                events[40]->disableOption(0);
+                events[40]->enableOption(1);
+            } else {
+                events[40]->enableOption(0);
+                events[40]->disableOption(1);
+            }
+            break;
+        case 41:
+            changeRoom(gateways[10]);
+            break;
+        case 42:
+            changeRoom(gateways[9]);
+            break;
+        case 43:
+            if (enemyReturn){
+                events[43]->disableOption(1);
+                events[43]->enableOption(2);
+            } else {
+                events[43]->enableOption(1);
+                events[43]->disableOption(2);
+            }
+            break;
+        case 44:
+            if (player.hasItem(items["key"])){
+                events[44]->disableOption(3);
+                events[44]->enableOption(4);
+            } else {
+                events[44]->enableOption(3);
+                events[44]->disableOption(4);
+            }
+            if (enemyReturn){
+                events[40]->disableOption(1);
+                events[40]->enableOption(2);
+            } else {
+                events[40]->enableOption(1);
+                events[40]->disableOption(2);
+            }
+            break;
+        case 45:
+            if (player.hasItem(items["scalpel"]))
+                events[45]->disableOption(0);
+            if (player.hasItem(items["key"])){
+                events[45]->disableOption(3);
+                events[45]->enableOption(4);
+            } else {
+                events[45]->enableOption(3);
+                events[45]->disableOption(4);
+            }
+            if (enemyReturn){
+                events[45]->disableOption(1);
+                events[45]->enableOption(2);
+            } else {
+                events[45]->enableOption(1);
+                events[45]->disableOption(2);
+            }
+            break;
+        case 46:
+            if (player.hasItem(items["key"])){
+                events[46]->disableOption(2);
+                events[46]->enableOption(3);
+            } else {
+                events[46]->enableOption(2);
+                events[46]->disableOption(2);
+            }
+            if (enemyReturn){
+                events[46]->disableOption(0);
+                events[46]->enableOption(1);
+            } else {
+                events[46]->enableOption(0);
+                events[46]->disableOption(1);
+            }
+            break;
+        case 47:
+            if (!player.hasItem(items["key"])){
+                enemyReturn = true;
+                events[47]->disableOption(0);
+            } else {
+                events[47]->enableOption(0);
+            }
+            break;
+        case 49:
+            changeRoom(gateways[11]);
+            break;
+        case 50:
+            changeRoom(gateways[10]);
+            if (enemyDown){
+                events[50]->enableOption(1);
+                events[50]->disableOption(2);
+                events[50]->disableOption(3);
+            } else if (!gateways[12]->isLocked()){
+                events[50]->disableOption(1);
+                events[50]->enableOption(2);
+                events[50]->disableOption(3);
+            } else {
+                events[50]->disableOption(1);
+                events[50]->disableOption(2);
+                events[50]->enableOption(3);
+            }
+            break;
+        case 51:
+            player.addItem(items["key"]);
+            ROOM(5)->removeItem(items["key"]);
+            if (enemyReturn){
+                events[51]->disableOption(0);
+                events[51]->enableOption(1);
+            } else {
+                events[51]->enableOption(0);
+                events[51]->disableOption(1);
+            }
+            break;
+        case 52:
+            if (enemyReturn){
+                events[52]->disableOption(0);
+                events[52]->enableOption(1);
+            } else {
+                events[52]->enableOption(0);
+                events[52]->disableOption(1);
+            }
+            break;
+        case 53:
+            if (player.hasItem(items["key"])){
+                events[53]->disableOption(3);
+                events[53]->enableOption(4);
+            } else {
+                events[53]->enableOption(3);
+                events[53]->disableOption(4);
+            }
+            if (enemyReturn){
+                events[53]->disableOption(1);
+                events[53]->enableOption(2);
+            } else {
+                events[53]->enableOption(1);
+                events[53]->disableOption(2);
+            }
+            break;
+        case 54:
+            player.addItem(items["scalpel"]);
+            ROOM(5)->removeItem(items["scalpel"]);
+            if (player.hasItem(items["key"])){
+                events[54]->disableOption(2);
+                events[54]->enableOption(3);
+            } else {
+                events[54]->enableOption(2);
+                events[54]->disableOption(3);
+            }
+            if (enemyReturn){
+                events[54]->disableOption(0);
+                events[54]->enableOption(1);
+            } else {
+                events[54]->enableOption(0);
+                events[54]->disableOption(1);
+            }
+            break;
+        case 55:
+            gateways[12]->setLocked(false);
+            break;
+        case 56:
+            if (currentRoom == CORR(5))
+                changeRoom(gateways[10]);
+            else if (currentRoom == CORR(7))
+                changeRoom(gateways[11]);
+            if (gateways[12]->isLocked()){
+                events[56]->enableOption(0);
+                events[56]->disableOption(1);
+            } else {
+                events[56]->disableOption(0);
+                events[56]->enableOption(1);
+            }
+            break;
+        case 58:
+            if (player.hasItem(items["key"])){
+                events[58]->disableOption(3);
+                events[58]->enableOption(4);
+            } else {
+                events[58]->enableOption(3);
+                events[58]->disableOption(4);
+            }
+            if (enemyReturn){
+                events[58]->disableOption(1);
+                events[58]->enableOption(2);
+            } else {
+                events[58]->enableOption(1);
+                events[58]->disableOption(2);
+            }
+            break;
+         case 59:
+            changeRoom(gateways[12]);
+            break;
+        case 60:
+            if (player.hasItem(items["passcode"])){
+                events[60]->disableOption(0);
+                events[60]->enableOption(1);
+            } else {
+                events[60]->enableOption(0);
+                events[60]->disableOption(1);
+            }
+            break;
+        case 61:
+            if (player.hasItem(items["pipe"])){
+                events[61]->disableOption(0);
+                events[61]->enableOption(1);
+            } else {
+                events[61]->enableOption(0);
+                events[61]->disableOption(1);
+            }
+            break;
+        case 63:
+            if (player.hasItem(items["passcode"])){
+                events[63]->disableOption(0);
+                events[63]->enableOption(1);
+            } else {
+                events[63]->enableOption(0);
+                events[63]->disableOption(1);
+            }
+            break;
+        case 64:
+           changeRoom(gateways[12]);
+           break;
+        case 65:
+            player.addItem(items["passcode"]);
+            ROOM(6)->removeItem(items["passcode"]);
+            break;
+        case 66:
+            enemyOnRoom5 = true;
+            enemyOnRoom4 = false;
+            break;
+        case 67:
+            changeRoom(gateways[9]);
+            break;
+        case 68:
+            if (currentRoom == CORR(5))
+                changeRoom(gateways[9]);
+            else if (currentRoom == CORR(3))
+                changeRoom(gateways[7]);
+            if (enemyOnRoom5){
+                events[68]->enableOption(0);
+                events[68]->disableOption(1);
+            } else {
+                events[68]->disableOption(0);
+                events[68]->enableOption(1);
+            }
+            break;
+        case 74:
+            changeRoom(gateways[5]);
+            if (player.hasItem(items["flashlight"])){
+                events[74]->disableOption(2);
+                events[74]->enableOption(3);
+            } else {
+                events[74]->enableOption(2);
+                events[74]->disableOption(3);
+            }
+            break;
+        case 75:
+            if (player.hasItem(items["flashlight"])){
+                events[75]->disableOption(1);
+                events[75]->enableOption(2);
+            } else {
+                events[75]->enableOption(1);
+                events[75]->disableOption(2);
+            }
+            break;
+        case 78:
+            if (player.hasItem(items["flashlight"])){
+                events[78]->disableOption(2);
+                events[78]->enableOption(3);
+            } else {
+                events[78]->enableOption(2);
+                events[78]->disableOption(3);
+            }
+            break;
+        case 80:
+            player.addItem(items["flashlight"]);
+            ROOM(4)->removeItem(items["flashlight"]);
+            break;
+        case 81:
+            if (player.hasItem(items["key"])){
+                events[81]->disableOption(2);
+                events[81]->enableOption(3);
+            } else {
+                events[81]->enableOption(2);
+                events[81]->disableOption(3);
+            }
+            if (enemyReturn){
+                events[81]->disableOption(0);
+                events[81]->enableOption(1);
+            } else {
+                events[81]->enableOption(0);
+                events[81]->disableOption(1);
+            }
+            break;
+        case 82:
+            if (currentRoom != ROOM(3))
+                changeRoom(gateways[3]);
+            break;
+        case 83:
+            //ROOM(3)->setVisible(true);
+            break;
+        case 87:
+            if (!player.hasItem(items["scalpel"]))
+                events[87]->disableOption(0);
+            else
+                events[87]->enableOption(0);
+            break;
+        case 91:
+            changeRoom(gateways[4]);
+            gameOver = true;
+            break;
+        case 92:
+            changeRoom(gateways[8]);
+            break;
+        case 93:
+            changeRoom(gateways[8]);
+            enemyOnRoom4 = false;
+            enemyOnRoom5 = false;
+            if (!player.hasItem(items["pipe"]))
+                events[93]->disableOption(2);
+            else
+                events[93]->enableOption(2);
+            if (!player.hasItem(items["scalpel"]))
+                events[93]->disableOption(3);
+            else
+                events[93]->enableOption(3);
+            break;
+        case 94:
+            gameOver = true;
+            break;
+        case 95:
+            gameOver = true;
+            break;
+        case 96:
+            enemyDown = true;
+            enemyReturn = false;
+            break;
+        case 97:
+            gameOver = true;
+            break;
+        case 98:
+            if (!player.hasItem(items["pipe"]))
+                events[98]->disableOption(2);
+            else
+                events[98]->enableOption(2);
+            if (!player.hasItem(items["scalpel"]))
+                events[98]->disableOption(3);
+            else
+                events[98]->enableOption(3);
+            break;
+        case 99:
+            player.removeItem(items["pipe"]);
+            break;
+        default: break;
     }
+    _SE events[option->id];
 }
 
-inline void ZorkUL::createGateway(int id, Room* r1, Room* r2) {
-    Gateway* g = new Gateway(id, r1, r2);
+inline void ZorkUL::createGateway(int id, Room* r1, Room* r2, bool locked) {
+    Gateway* g = new Gateway(id, r1, r2, locked);
     gateways.push_back(g);
     r1->addGateway(g);
     r2->addGateway(g);
@@ -1147,7 +1654,7 @@ void ZorkUL::paintEvent(QPaintEvent* e) {
         painter.drawPixmap(room->getRect(), origOverlay);
     }
 
-    painter.drawImage(p.getRect(), p.getImage());
+    painter.drawImage(player.getRect(), player.getImage());
 
     QFont font = painter.font();
     font.setPixelSize(20);
@@ -1178,7 +1685,7 @@ void ZorkUL::mouseReleaseEvent(QMouseEvent* e) {
 }
 
 void ZorkUL::keyPressEvent(QKeyEvent *e) {
-    if (!p.isMoving()) {
+    if (!player.isMoving()) {
         vector<Event::Option*> options = showingEvent->getOptions();
         if ((e->key() > Qt::Key_0) && (e->key() < (int) (Qt::Key_1 + options.size()))) {
             changedRoom = false;
@@ -1192,10 +1699,10 @@ void ZorkUL::keyPressEvent(QKeyEvent *e) {
 }
 
 void ZorkUL::animate() {
-    if (!p.isMoving()) {
-        p.setAnimation(currentRoom->getPlayerPositionAbs(), ANIMATION_STEP);
+    if (!player.isMoving()) {
+        player.setAnimation(currentRoom->getPlayerPositionAbs(), ANIMATION_STEP);
     }
-    bool finished = p.update();
+    bool finished = player.update();
     if (finished) {
         timer->stop();
     }

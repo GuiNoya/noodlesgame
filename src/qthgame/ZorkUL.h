@@ -24,17 +24,27 @@ class ZorkUL : public QMainWindow {
     Q_OBJECT
 
     private:
-        Player p;
+        Player player;
         Room *currentRoom;
         Event *showingEvent;
         vector<Room*> rooms;
         vector<Gateway*> gateways;
-        vector<Item*> items;
         map<int, Event*> events;
+        map<string, Item*> items;
         bool changedRoom;
 
+        //flags
+        bool enemyOnRoom4 = false;
+        bool enemyOnRoom5 = false;
+        bool hasReachedCorner = false;
+        bool gameOver = false;
+        bool enemyDown = false;
+        bool enemyReturn = false;
+
         void createGame();
+        void createRooms();
         void createEvents();
+        void createItems();
         void printWelcome();
         void changeRoom(Gateway* gateway);
         Room* transit(Room* origin, Room* dest);
@@ -44,7 +54,7 @@ class ZorkUL : public QMainWindow {
         static constexpr double ANIMATION_STEP = 0.05;
         static const int ANIMATION_DELAY = 100;
 
-        inline void createGateway(int id, Room* r1, Room* r2) __attribute__((always_inline));
+        inline void createGateway(int id, Room* r1, Room* r2, bool locked) __attribute__((always_inline));
         inline void drawItems(QPainter& painter, vector<Item*> items);
         inline void EVENT(int id, string message, initializer_list<Event::Option*> list);
         inline Event::Option* OPTION(int id, string message);
@@ -62,8 +72,6 @@ class ZorkUL : public QMainWindow {
         ZorkUL(QWidget *parent = 0);
         ~ZorkUL();
         void play();
-        //static const unsigned short DRAW_PER_SECOND = 30;
-
 };
 
 #endif /*ZORKUL_H_*/
