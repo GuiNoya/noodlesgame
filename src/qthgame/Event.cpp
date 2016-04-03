@@ -41,3 +41,12 @@ void Event::enableOption(int i) {
     Option* o = options.at(i);
     o->enabled = true;
 }
+
+vector<Event::Option*> Event::getEnabledOptions(){
+    vector<Option*> r;
+    for (auto i: options){
+        if (i->enabled)
+            r.push_back(i);
+    }
+    return r;
+}

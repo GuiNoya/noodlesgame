@@ -52,7 +52,7 @@ class ZorkUL : public QMainWindow {
         void performOption(Event::Option* option);
 
         QTimer* timer;
-        static constexpr double ANIMATION_STEP = 0.05;
+        static constexpr double ANIMATION_STEP = 1;
         static const int ANIMATION_DELAY = 100;
 
         inline void createGateway(int id, Room* r1, Room* r2, bool locked) __attribute__((always_inline));

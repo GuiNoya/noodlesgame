@@ -1,7 +1,7 @@
 #include "ZorkUL.h"
 
 #define ROOM(x) rooms[x-1]
-#define CORR(x) rooms[7+x]
+#define CORR(x) rooms[6+x]
 #define _SE showingEvent =
 
 using namespace std;
@@ -98,7 +98,8 @@ void ZorkUL::createRooms() {
     c3->addViewableRooms({c1, c2, c4});
     c4->addViewableRooms({c1, c2, c3, c5, c6, c7});
     c5->addViewableRooms({c4, c6, c7});
-    c6->addViewableRooms({c4, c6, c7});
+    c6->addViewableRooms({c4, c5, c7});
+    c7->addViewableRooms({c4, c5, c6});
 }
 
 void ZorkUL::createEvents() {
@@ -274,6 +275,7 @@ void ZorkUL::createEvents() {
         OPTION(69, "Check door on the left"),
         OPTION(21, "Go back"),
         OPTION(26, "Continue down the hall"),
+        OPTION(31, "Continue down the hall"),
         OPTION(38, "Continue down the hall")
         }
     );
@@ -304,7 +306,8 @@ void ZorkUL::createEvents() {
         OPTION(30, "Check door on the left"),
         OPTION(69, "Check door on the left"),
         OPTION(21, "Go back"),
-        OPTION(26, "Continue down the hall")
+        OPTION(26, "Continue down the hall"),
+        OPTION(38, "Continue down the hall")
         }
     );
 
@@ -333,7 +336,8 @@ void ZorkUL::createEvents() {
         OPTION(30, "Check door on the left"),
         OPTION(69, "Check door on the left"),
         OPTION(21, "Go back on the corridor"),
-        OPTION(26, "Continue down the hall")
+        OPTION(26, "Continue down the hall"),
+        OPTION(38, "Continue down the hall")
         }
     );
 
@@ -353,7 +357,7 @@ void ZorkUL::createEvents() {
               "YOU LOST.", {}
     );
 
-    EVENT(28, "You quickly enter the room and close the door. You hear steps approaching, and then some beeps and a door opening and closing.\n"
+    EVENT(28, "You quickly enter the room and close the door. You hear footsteps approaching, and then some beeps and a door opening and closing.\n"
               "You slowly get out of the room.",
         {
         OPTION(30, "Check the door across from you"),
@@ -373,6 +377,7 @@ void ZorkUL::createEvents() {
 
     EVENT(30, "You can see that the light inside the room is turned on. You still do not know the passcode for the door.",
         {
+        OPTION(22, "Check door on the right"),
         OPTION(21, "Go back on the corridor"),
         OPTION(31, "Keep walking ahead")
         }
@@ -417,7 +422,7 @@ void ZorkUL::createEvents() {
         }
     );
 
-    EVENT(36, "You reaches the corner of the corridor. There is a door to your left and the corridor continues on your right.",
+    EVENT(36, "You reach the corner of the corridor. There is a door to your left and the corridor continues on your right.",
         {
         OPTION(37, "Check door"),
         OPTION(38, "Go back on the corridor"),
@@ -437,7 +442,7 @@ void ZorkUL::createEvents() {
         {
         OPTION(35, "Go Up"),
         OPTION(36, "Go to the corner of the corridor"),
-        OPTION(38, "Go to the corner of the corridor")
+        OPTION(68, "Go to the corner of the corridor")
         }
     );
 
@@ -559,7 +564,7 @@ void ZorkUL::createEvents() {
         {
         OPTION(56, "Turn around and walk back"),
         OPTION(42, "Go towards the corner of the corridors"),
-        OPTION(42, "Go towards the corner of the corridors"),
+        OPTION(66, "Go towards the corner of the corridors"),
         OPTION(68, "Go towards the corner of the corridors")
         }
     );
@@ -1060,14 +1065,6 @@ void ZorkUL::changeRoom(Gateway* gateway) {
 }
 
 void ZorkUL::performOption(Event::Option* option) {
-    if (currentRoom == ROOM(1)) {
-        changeRoom(gateways[0]);
-        _SE events[1];
-    } else {
-        changeRoom(gateways[1]);
-        _SE events[2];
-    }
-    return;
     switch (option->id) {
         case 11:
             gateways[0]->setLocked(false);
@@ -1095,7 +1092,7 @@ void ZorkUL::performOption(Event::Option* option) {
             }
             break;
         case 18:
-            changeRoom(gateways[0]);
+            changeRoom(gateways[1]);
             break;
         case 19:
             if (enemyOnRoom4){
@@ -1112,12 +1109,18 @@ void ZorkUL::performOption(Event::Option* option) {
                 events[19]->disableOption(2);
                 events[19]->enableOption(3);
             }
-            if (hasReachedCorner){
+            if (enemyDown){
+                events[19]->disableOption(5);
+                events[19]->disableOption(6);
+                events[19]->enableOption(7);
+            } else if (enemyOnRoom4){
                 events[19]->disableOption(5);
                 events[19]->enableOption(6);
+                events[19]->disableOption(7);
             } else {
                 events[19]->enableOption(5);
                 events[19]->disableOption(6);
+                events[19]->disableOption(7);
             }
             changeRoom(gateways[2]);
             break;
@@ -1160,6 +1163,13 @@ void ZorkUL::performOption(Event::Option* option) {
                 events[22]->disableOption(3);
                 events[22]->enableOption(4);
             }
+            if (enemyOnRoom4 || enemyDown){
+                events[22]->disableOption(6);
+                events[22]->enableOption(7);
+            } else {
+                events[22]->enableOption(6);
+                events[22]->disableOption(7);
+            }
             break;
         case 25:
             if (player.hasItem(items["flashlight"])){
@@ -1183,6 +1193,13 @@ void ZorkUL::performOption(Event::Option* option) {
                 events[25]->disableOption(3);
                 events[25]->enableOption(4);
             }
+            if (enemyOnRoom4 || enemyDown){
+                events[25]->disableOption(6);
+                events[25]->enableOption(7);
+            } else {
+                events[25]->enableOption(6);
+                events[25]->disableOption(7);
+            }
             break;
         case 26:
             changeRoom(gateways[6]);
@@ -1199,6 +1216,7 @@ void ZorkUL::performOption(Event::Option* option) {
             gameOver = true;
             break;
         case 28:
+            changeRoom(gateways[6]);
             enemyOnRoom4 = true;
             break;
         case 31:
@@ -1237,12 +1255,20 @@ void ZorkUL::performOption(Event::Option* option) {
             break;
         case 36:
             changeRoom(gateways[7]);
+            hasReachedCorner = true;
             break;
         case 38:
             if (currentRoom == CORR(2))
                 changeRoom(gateways[6]);
             else if (currentRoom == CORR(4))
                 changeRoom(gateways[7]);
+            if (!hasReachedCorner){
+                events[38]->enableOption(1);
+                events[38]->disableOption(2);
+            } else {
+                events[38]->disableOption(1);
+                events[38]->enableOption(2);
+            }
             break;
         case 39:
             changeRoom(gateways[9]);
@@ -1288,11 +1314,11 @@ void ZorkUL::performOption(Event::Option* option) {
                 events[44]->disableOption(4);
             }
             if (enemyReturn){
-                events[40]->disableOption(1);
-                events[40]->enableOption(2);
+                events[44]->disableOption(1);
+                events[44]->enableOption(2);
             } else {
-                events[40]->enableOption(1);
-                events[40]->disableOption(2);
+                events[44]->enableOption(1);
+                events[44]->disableOption(2);
             }
             break;
         case 45:
@@ -1331,11 +1357,12 @@ void ZorkUL::performOption(Event::Option* option) {
             break;
         case 47:
             if (!player.hasItem(items["key"])){
-                enemyReturn = true;
+                if (!enemyDown) enemyReturn = true;
                 events[47]->disableOption(0);
             } else {
                 events[47]->enableOption(0);
             }
+
             break;
         case 49:
             changeRoom(gateways[11]);
@@ -1552,7 +1579,7 @@ void ZorkUL::performOption(Event::Option* option) {
                 changeRoom(gateways[3]);
             break;
         case 83:
-            //ROOM(3)->setVisible(true);
+            ROOM(3)->setVisible(true);
             break;
         case 87:
             if (!player.hasItem(items["scalpel"]))
@@ -1680,12 +1707,12 @@ void ZorkUL::paintEvent(QPaintEvent* e) {
 
         painter.setPen(QColor::fromRgb(204,255,255));
         tRect.translate(0, 370);
-        auto options = showingEvent->getOptions();
+        auto options = showingEvent->getEnabledOptions();
         string s;
-        for (unsigned int i=0; i < options.size(); i++) {
-            s += to_string(i + 1) + ". " + options[i]->label + "\n";
+        for (unsigned int i=0; i < options.size(); i++){
+            s += to_string(i+1) + ". " + options[i]->label + "\n";
         }
-        painter.drawText(tRect, Qt::AlignJustify | Qt::TextWordWrap, QString::fromStdString(s));
+        painter.drawText(tRect, Qt::TextWordWrap, QString::fromStdString(s));
     }
 
 #ifdef CONSOLE_OUTPUT
@@ -1701,7 +1728,7 @@ void ZorkUL::mouseReleaseEvent(QMouseEvent* e) {
 
 void ZorkUL::keyPressEvent(QKeyEvent *e) {
     if (!timer->isActive()) {
-        vector<Event::Option*> options = showingEvent->getOptions();
+        vector<Event::Option*> options = showingEvent->getEnabledOptions();
         if ((e->key() > Qt::Key_0) && (e->key() < (int) (Qt::Key_1 + options.size()))) {
             changedRoom = false;
             Event::Option* option = options[e->key() - Qt::Key_1];

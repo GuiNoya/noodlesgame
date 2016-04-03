@@ -27,6 +27,7 @@ class Event {
         void addOption(Option *option);
         void disableOption(int i);
         void enableOption(int i);
+        vector<Option*> getEnabledOptions();
 
     private:
         int id;
