@@ -2,11 +2,17 @@
 #include "ZorkUL.h"
 
 int main(int argc, char *argv[]) {
+    int currentExitCode = 0;
 
-    QApplication app(argc, argv);
+    do {
+        QApplication app(argc, argv);
 
-    ZorkUL game;
-    game.play();
+        ZorkUL game;
+        game.play();
 
-    return app.exec();
+        currentExitCode = app.exec();
+
+    } while (currentExitCode == ZorkUL::EXIT_CODE_RESTART);
+
+    return currentExitCode;
 }

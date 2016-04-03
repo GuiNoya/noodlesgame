@@ -6,10 +6,12 @@
 #include <map>
 #include <stdlib.h>
 
+#include <QApplication>
 #include <QMainWindow>
 #include <QPainter>
 #include <QMouseEvent>
 #include <QTimer>
+#include <QPushButton>
 #include "Defines.h"
 
 #include "Room.h"
@@ -73,6 +75,7 @@ class ZorkUL : public QMainWindow {
         ZorkUL(QWidget *parent = 0);
         ~ZorkUL();
         void play();
+        static const int EXIT_CODE_RESTART = -7158258;
 };
 
 #endif /*ZORKUL_H_*/

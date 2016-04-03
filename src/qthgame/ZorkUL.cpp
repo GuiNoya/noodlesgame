@@ -9,7 +9,7 @@ using namespace std;
 ZorkUL::ZorkUL(QWidget *parent) : QMainWindow(parent), player("Main Character", 0, 0, "player.png"), gameLogo(ASSET((string)"game.png")) {
     createGame();
 
-    setWindowTitle(QString::fromUtf8("Horror/Action/Turn Game, written in C++ and Qt!"));
+    setWindowTitle(QString::fromUtf8("FLEE (if you can)"));
     setStyleSheet("background-color:black;");
     setFixedSize(1100, 600);
 
@@ -353,8 +353,8 @@ void ZorkUL::createEvents() {
               "He is big and strong.\n"
               "You are weak and has no kind of weapon.\n"
               "You try to run, but he catches you and punches you in the face.\n"
-              "The world turns to black.\n"
-              "YOU LOST.", {}
+              "The world turns to black.\n\n"
+              "YOU LOST", {}
     );
 
     EVENT(28, "You quickly enter the room and close the door. You hear footsteps approaching, and then some beeps and a door opening and closing.\n"
@@ -392,14 +392,14 @@ void ZorkUL::createEvents() {
 
     EVENT(32, "You reaches the beginning of the corridor and he tackles you.\n"
               "You fall and hit your head on the plant’s vase.\n"
-              "The world turns to black.\n"
-              "YOU LOST.", {}
+              "The world turns to black.\n\n"
+              "YOU LOST", {}
     );
 
     EVENT(33, "He is much stronger than you are.\n"
               "He hits you with the pipe that you should have used against him.\n"
-              "The world turns to black.\n"
-              "YOU LOST.", {}
+              "The world turns to black.\n\n"
+              "YOU LOST", {}
     );
 
     EVENT(34, "You quickly hit him in the head with the pipe. He falls down in front of you.\n"
@@ -955,7 +955,7 @@ void ZorkUL::createEvents() {
               "You look around and see no one.\n"
               "You remember the car park.\n"
               "You know how to hotwire a car.\n"
-              "Run, Forest, RUN!\n"
+              "Run, Forest, RUN!\n\n"
               "YOU WON", {}
     );
 
@@ -978,12 +978,12 @@ void ZorkUL::createEvents() {
 
     EVENT(94, "He is way bigger than you.\n"
               "He punches you in the face.\n"
-              "The world turns to black.\n"
+              "The world turns to black.\n\n"
               "YOU LOST", {}
     );
 
     EVENT(95, "You try to scape but he catches you.\n"
-              "The world turns to black.\n"
+              "The world turns to black.\n\n"
               "YOU LOST", {}
     );
 
@@ -998,7 +998,7 @@ void ZorkUL::createEvents() {
 
     EVENT(97, "You strike him with the scalpel, but it gets stuck on him. Now he is really mad.\n"
               "He punches you in the face.\n"
-              "The world turns to black.\n"
+              "The world turns to black.\n\n"
               "YOU LOST", {}
     );
 
@@ -1029,7 +1029,6 @@ void ZorkUL::createEvents() {
         }
     );
 }
-
 
 void ZorkUL::createItems(){
     items["pipe"] = new Item(0, "Pipe", "old broken pipe", QRect(0,0,0,0));
@@ -1737,14 +1736,29 @@ void ZorkUL::paintEvent(QPaintEvent* e) {
         string m = showingEvent->getMessage();
         painter.drawText(tRect, Qt::AlignHCenter | Qt::TextWordWrap, QString::fromStdString(m));
 
-        painter.setPen(QColor::fromRgb(204,255,255));
-        tRect.translate(0, 370);
-        auto options = showingEvent->getEnabledOptions();
-        string s;
-        for (unsigned int i=0; i < options.size(); i++){
-            s += to_string(i+1) + ". " + options[i]->label + "\n";
+        if (!gameOver) {
+            painter.setPen(QColor::fromRgb(204,255,255));
+            tRect.translate(0, 370);
+            auto options = showingEvent->getEnabledOptions();
+            string s;
+            for (unsigned int i=0; i < options.size(); i++){
+                s += to_string(i+1) + ". " + options[i]->label + "\n";
+            }
+            painter.drawText(tRect, Qt::TextWordWrap, QString::fromStdString(s));
+        } else {
+            tRect.translate(0, 370);
+            tRect.setHeight(100);
+            QPushButton* button = new QPushButton("RESTART", this);
+            button->setGeometry(tRect);
+            QFont font = button->font();
+            font.setPixelSize(36);
+            button->setFont(font);
+            button->setStyleSheet("color: #BEFFFF");
+            connect(button, &QPushButton::clicked, [&]() {
+                qApp->exit(EXIT_CODE_RESTART);
+            });
+            button->show();
         }
-        painter.drawText(tRect, Qt::TextWordWrap, QString::fromStdString(s));
     }
 
 #ifdef CONSOLE_OUTPUT
@@ -1759,7 +1773,7 @@ void ZorkUL::mouseReleaseEvent(QMouseEvent* e) {
 }
 
 void ZorkUL::keyPressEvent(QKeyEvent *e) {
-    if (!timer->isActive()) {
+    if (!timer->isActive() || !gameOver) {
         vector<Event::Option*> options = showingEvent->getEnabledOptions();
         if ((e->key() > Qt::Key_0) && (e->key() < (int) (Qt::Key_1 + options.size()))) {
             Event::Option* option = options[e->key() - Qt::Key_1];
