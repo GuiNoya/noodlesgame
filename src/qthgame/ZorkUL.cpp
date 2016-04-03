@@ -104,7 +104,7 @@ void ZorkUL::createRooms() {
 
 void ZorkUL::createEvents() {
     EVENT(1, "You feel your head pounding and slowly open your eyes.\n"
-            "You sit up and look around. You were lying in a metal bed."
+            "You sit up and look around. You were lying in a metal bed. "
             "There is a toilet on the other side of the room and a boarded window on the wall. There are iron bars in front of you.\n"
             "You realize you are in some kind of a cell, but you have no idea how you ended up there.\n"
             "What do you want to do?",
@@ -330,7 +330,6 @@ void ZorkUL::createEvents() {
 
     EVENT(25, "All you see is darkness. You stumble in something and almost fall. It seems like a chair. You decide to get out of the room.",
         {
-        OPTION(25, "Enter room"),
         OPTION(82, "Enter room"),
         OPTION(23, "Check door on the left"),
         OPTION(30, "Check door on the left"),
@@ -417,7 +416,7 @@ void ZorkUL::createEvents() {
         OPTION(23, "Check door on the left"),
         OPTION(30, "Check door on the left"),
         OPTION(69, "Check door on the left"),
-        OPTION(21, "Go back"),
+        OPTION(21, "Go back up"),
         OPTION(38, "Continue down the hall")
         }
     );
@@ -548,6 +547,7 @@ void ZorkUL::createEvents() {
     EVENT(48, "You see the same from the other window: an open field.",
         {
         OPTION(47, "Check door behind you"),
+        OPTION(59, "Enter the room behind you"),
         OPTION(49, "Keep walking"),
         OPTION(50, "Go back on the corridor")
         }
@@ -723,7 +723,7 @@ void ZorkUL::createEvents() {
         }
     );
 
-    EVENT(66, "You hear noise inside the surgical room. The person you heard earlier must have come back to it",
+    EVENT(66, "You hear noise inside the surgical room. The person you heard earlier must have come back to it.",
         {
         OPTION(98, "Enter room on the left"),
         OPTION(67, "Go back to the right"),
@@ -751,6 +751,7 @@ void ZorkUL::createEvents() {
         {
         OPTION(70, "Try \"4321\""),
         OPTION(72, "See the paper you found on the bulletin board"),
+        OPTION(22, "Check door on the right"),
         OPTION(21, "Keep walking"),
         OPTION(38, "Turn around and go down the corridor")
         }
@@ -758,8 +759,9 @@ void ZorkUL::createEvents() {
 
     EVENT(70, "Wrong password.",
         {
-        OPTION(70, "Try \"6789\""),
+        OPTION(71, "Try \"6789\""),
         OPTION(72, "See the paper you found on the bulletin board"),
+        OPTION(22, "Check door on the right"),
         OPTION(21, "Keep walking"),
         OPTION(38, "Turn around and go down the corridor")
         }
@@ -767,7 +769,8 @@ void ZorkUL::createEvents() {
 
     EVENT(71, "Wrong password.",
         {
-        OPTION(72, "See the paper you found on the bulletin board"),
+        OPTION(72, "See the damn paper you found on the bulletin board"),
+        OPTION(22, "Check door on the right"),
         OPTION(21, "Keep walking"),
         OPTION(38, "Turn around and go down the corridor")
         }
@@ -775,7 +778,8 @@ void ZorkUL::createEvents() {
 
     EVENT(72, "In the paper, you read \"3109\"",
         {
-        OPTION(70, "Try \"3109\""),
+        OPTION(73, "Try \"3109\""),
+        OPTION(22, "Check door on the right"),
         OPTION(21, "Keep walking"),
         OPTION(38, "Turn around and go down the corridor")
         }
@@ -784,6 +788,7 @@ void ZorkUL::createEvents() {
     EVENT(73, "Here you go. The door is unlocked.",
         {
         OPTION(74, "Enter room"),
+        OPTION(22, "Check door on the right"),
         OPTION(21, "Keep walking"),
         OPTION(38, "Turn around and go down the corridor")
         }
@@ -1082,7 +1087,7 @@ void ZorkUL::performOption(Event::Option* option) {
             }
             break;
         case 16:
-            if (player.hasItem(items["pipe"])){
+            if (player.hasItem(items["pipe"]) || player.hasItem(items["passcode"])){
                 events[16]->disableOption(0);
                 events[16]->enableOption(1);
             }
@@ -1109,7 +1114,7 @@ void ZorkUL::performOption(Event::Option* option) {
                 events[19]->disableOption(2);
                 events[19]->enableOption(3);
             }
-            if (enemyDown){
+            if (enemyDown || enemyOnRoom5){
                 events[19]->disableOption(5);
                 events[19]->disableOption(6);
                 events[19]->enableOption(7);
@@ -1133,7 +1138,7 @@ void ZorkUL::performOption(Event::Option* option) {
                 changeRoom(gateways[1]);
             else if (currentRoom == CORR(2))
                 changeRoom(gateways[2]);
-            if (player.hasItem(items["pipe"]) | player.hasItem(items["passcode"])){
+            if (player.hasItem(items["pipe"]) || player.hasItem(items["passcode"])){
                 events[21]->disableOption(1);
                 events[21]->enableOption(2);
             } else {
@@ -1172,33 +1177,31 @@ void ZorkUL::performOption(Event::Option* option) {
             }
             break;
         case 25:
-            if (player.hasItem(items["flashlight"])){
+            if (!player.hasItem(items["flashlight"])){
                 events[25]->disableOption(0);
-                events[25]->enableOption(1);
             } else {
                 events[25]->enableOption(0);
-                events[25]->disableOption(1);
             }
             if (enemyOnRoom4){
-                events[25]->disableOption(2);
-                events[25]->enableOption(3);
-                events[25]->disableOption(4);
-            }
-            else if (!player.hasItem(items["passcode"])){
+                events[25]->disableOption(1);
                 events[25]->enableOption(2);
                 events[25]->disableOption(3);
-                events[25]->disableOption(4);
-            } else {
+            }
+            else if (!player.hasItem(items["passcode"])){
+                events[25]->enableOption(1);
                 events[25]->disableOption(2);
                 events[25]->disableOption(3);
-                events[25]->enableOption(4);
+            } else {
+                events[25]->disableOption(1);
+                events[25]->disableOption(2);
+                events[25]->enableOption(3);
             }
             if (enemyOnRoom4 || enemyDown){
-                events[25]->disableOption(6);
-                events[25]->enableOption(7);
-            } else {
+                events[25]->disableOption(5);
                 events[25]->enableOption(6);
-                events[25]->disableOption(7);
+            } else {
+                events[25]->enableOption(5);
+                events[25]->disableOption(6);
             }
             break;
         case 26:
@@ -1232,10 +1235,14 @@ void ZorkUL::performOption(Event::Option* option) {
             enemyDown = true;
             break;
         case 35:
-            if (currentRoom == ROOM(4))
+            if (currentRoom == ROOM(4)){
                 changeRoom(gateways[5]);
-            else if (currentRoom == ROOM(3))
+                gateways[5]->setLocked(true);
+            }
+            else if (currentRoom == ROOM(3)){
                 changeRoom(gateways[3]);
+                ROOM(3)->setVisible(false);
+            }
             else if (currentRoom == CORR(3))
                 changeRoom(gateways[6]);
             if (enemyOnRoom4){
@@ -1364,6 +1371,15 @@ void ZorkUL::performOption(Event::Option* option) {
             }
 
             break;
+        case 48:
+            if (gateways[12]->isLocked()){
+                events[48]->enableOption(0);
+                events[48]->disableOption(1);
+            } else {
+                events[48]->disableOption(0);
+                events[48]->enableOption(1);
+            }
+            break;
         case 49:
             changeRoom(gateways[11]);
             break;
@@ -1473,6 +1489,8 @@ void ZorkUL::performOption(Event::Option* option) {
             changeRoom(gateways[12]);
             break;
         case 60:
+            if (currentRoom == CORR(6))
+                changeRoom(gateways[12]);
             if (player.hasItem(items["passcode"])){
                 events[60]->disableOption(0);
                 events[60]->enableOption(1);
@@ -1509,6 +1527,7 @@ void ZorkUL::performOption(Event::Option* option) {
         case 66:
             enemyOnRoom5 = true;
             enemyOnRoom4 = false;
+            changeRoom(gateways[9]);
             break;
         case 67:
             changeRoom(gateways[9]);
@@ -1527,6 +1546,7 @@ void ZorkUL::performOption(Event::Option* option) {
             }
             break;
         case 74:
+            gateways[5]->setLocked(false);
             changeRoom(gateways[5]);
             if (player.hasItem(items["flashlight"])){
                 events[74]->disableOption(2);
@@ -1586,6 +1606,9 @@ void ZorkUL::performOption(Event::Option* option) {
                 events[87]->disableOption(0);
             else
                 events[87]->enableOption(0);
+            break;
+        case 90:
+            gateways[4]->setLocked(false);
             break;
         case 91:
             changeRoom(gateways[4]);
@@ -1675,6 +1698,10 @@ void ZorkUL::paintEvent(QPaintEvent* e) {
 
     // Draw the overlays
     for (Room* room : rooms) { // The separate loop is to draw items below all overlays
+        if ((room == currentRoom || room == destRoom) && room == ROOM(3) && !ROOM(3)->isVisible()){
+            static const QPixmap overlay(ASSET((string)"overlay.png"));
+            painter.drawPixmap(room->getRect(), overlay);
+        }
         if (room == currentRoom || room == destRoom) continue;
         vector<Room*> vRooms = currentRoom->getViewableRooms();
         bool isVR = false;
