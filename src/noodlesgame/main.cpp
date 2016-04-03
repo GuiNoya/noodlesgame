@@ -1,5 +1,5 @@
 #include <QApplication>
-#include "ZorkUL.h"
+#include "ZorkFlee.h"
 
 int main(int argc, char *argv[]) {
     int currentExitCode = 0;
@@ -7,12 +7,12 @@ int main(int argc, char *argv[]) {
     do {
         QApplication app(argc, argv);
 
-        ZorkUL game;
+        ZorkFlee game;
         game.play();
 
         currentExitCode = app.exec();
 
-    } while (currentExitCode == ZorkUL::EXIT_CODE_RESTART);
+    } while (currentExitCode == ZorkFlee::EXIT_CODE_RESTART);
 
     return currentExitCode;
 }

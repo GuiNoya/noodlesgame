@@ -1,4 +1,4 @@
-#include "ZorkUL.h"
+#include "ZorkFlee.h"
 
 #define ROOM(x) rooms[x-1]
 #define CORR(x) rooms[6+x]
@@ -6,7 +6,7 @@
 
 using namespace std;
 
-ZorkUL::ZorkUL(QWidget *parent) : QMainWindow(parent), player("Main Character", 0, 0, "player.png"), gameLogo(ASSET((string)"game.png")) {
+ZorkFlee::ZorkFlee(QWidget *parent) : QMainWindow(parent), player("Main Character", 0, 0, "player.png"), gameLogo(ASSET((string)"game.png")) {
     createGame();
 
     setWindowTitle(QString::fromUtf8("FLEE (if you can)"));
@@ -17,7 +17,7 @@ ZorkUL::ZorkUL(QWidget *parent) : QMainWindow(parent), player("Main Character", 
     connect(timer, SIGNAL(timeout()), this, SLOT(animate()));
 }
 
-ZorkUL::~ZorkUL() {
+ZorkFlee::~ZorkFlee() {
     for (vector<Room*>::iterator i = rooms.begin(); i != rooms.end(); i++) {
         delete (*i);
     }
@@ -34,7 +34,7 @@ ZorkUL::~ZorkUL() {
     delete timer;
 }
 
-void ZorkUL::createGame() {
+void ZorkFlee::createGame() {
     createRooms();
     createEvents();
     createItems();
@@ -44,7 +44,7 @@ void ZorkUL::createGame() {
     player.setPosition(currentRoom->getPlayerPositionAbs());
 }
 
-void ZorkUL::createRooms() {
+void ZorkFlee::createRooms() {
     Room *r1, *r2, *r3, *r4, *r5, *r6, *r7;
     Room *c1, *c2, *c3, *c4, *c5, *c6, *c7;
 
@@ -103,7 +103,7 @@ void ZorkUL::createRooms() {
     c7->addViewableRooms({c4, c5, c6});
 }
 
-void ZorkUL::createEvents() {
+void ZorkFlee::createEvents() {
     EVENT(1, "You feel your head pounding and slowly open your eyes.\n"
             "You sit up and look around. You were lying in a metal bed. "
             "There is a toilet on the other side of the room and a boarded window on the wall. There are iron bars in front of you.\n"
@@ -1030,7 +1030,7 @@ void ZorkUL::createEvents() {
     );
 }
 
-void ZorkUL::createItems(){
+void ZorkFlee::createItems(){
     items["pipe"] = new Item(0, "Pipe", "old broken pipe", QRect(0,0,0,0));
     items["key"] = new Item(1, "Key", "", QRect(322,247,12,12), "key.png");
     items["scalpel"] = new Item(2, "Scalpel", "", QRect(70,177,13,3), "scalpel.png");
@@ -1047,18 +1047,18 @@ void ZorkUL::createItems(){
 /**
  *  Main play routine.  Loops until end of play.
  */
-void ZorkUL::play() {
+void ZorkFlee::play() {
     printWelcome();
     show();
 }
 
-void ZorkUL::printWelcome() {
+void ZorkFlee::printWelcome() {
     cout << "Start Game" << endl;
     cout << endl;
     cout << currentRoom->toString() << endl;
 }
 
-void ZorkUL::changeRoom(Gateway* gateway) {
+void ZorkFlee::changeRoom(Gateway* gateway) {
 
     Room* nextRoom = gateway->getOtherRoom(currentRoom);
 
@@ -1068,7 +1068,7 @@ void ZorkUL::changeRoom(Gateway* gateway) {
     }
 }
 
-void ZorkUL::performOption(Event::Option* option) {
+void ZorkFlee::performOption(Event::Option* option) {
     switch (option->id) {
         case 11:
             gateways[0]->setLocked(false);
@@ -1660,14 +1660,14 @@ void ZorkUL::performOption(Event::Option* option) {
     _SE events[option->id];
 }
 
-inline void ZorkUL::createGateway(int id, Room* r1, Room* r2, bool locked) {
+inline void ZorkFlee::createGateway(int id, Room* r1, Room* r2, bool locked) {
     Gateway* g = new Gateway(id, r1, r2, locked);
     gateways.push_back(g);
     r1->addGateway(g);
     r2->addGateway(g);
 }
 
-inline void ZorkUL::drawItems(QPainter& painter, Room *room) {
+inline void ZorkFlee::drawItems(QPainter& painter, Room *room) {
     QPoint roomPos = room->getRect().topLeft();
     for (Item* i : room->getItems()) {
         QRect rect = i->getRect();
@@ -1676,18 +1676,18 @@ inline void ZorkUL::drawItems(QPainter& painter, Room *room) {
     }
 }
 
-inline void ZorkUL::EVENT(int id, string message, initializer_list<Event::Option*> list) {
+inline void ZorkFlee::EVENT(int id, string message, initializer_list<Event::Option*> list) {
     Event *e = new Event(id, message);
     for (auto i : list)
         e->addOption(i);
     events[id] = e;
 }
 
-inline Event::Option* ZorkUL::OPTION(int id, string message) {
+inline Event::Option* ZorkFlee::OPTION(int id, string message) {
     return new Event::Option(id, message);
 }
 
-void ZorkUL::paintEvent(QPaintEvent* e) {
+void ZorkFlee::paintEvent(QPaintEvent* e) {
     Q_UNUSED(e);
 
     QPainter painter(this);
@@ -1768,11 +1768,11 @@ void ZorkUL::paintEvent(QPaintEvent* e) {
 
 }
 
-void ZorkUL::mouseReleaseEvent(QMouseEvent* e) {
+void ZorkFlee::mouseReleaseEvent(QMouseEvent* e) {
     cout << "Button:" << e->button() << "  x:" << e->x() << "  y:" << e->y() << endl;
 }
 
-void ZorkUL::keyPressEvent(QKeyEvent *e) {
+void ZorkFlee::keyPressEvent(QKeyEvent *e) {
     if (!timer->isActive() || !gameOver) {
         vector<Event::Option*> options = showingEvent->getEnabledOptions();
         if ((e->key() > Qt::Key_0) && (e->key() < (int) (Qt::Key_1 + options.size()))) {
@@ -1785,7 +1785,7 @@ void ZorkUL::keyPressEvent(QKeyEvent *e) {
     }
 }
 
-void ZorkUL::animate() {
+void ZorkFlee::animate() {
     if (!player.isMoving()) {
         player.setAnimation(destRoom->getPlayerPositionAbs(), ANIMATION_STEP);
     }

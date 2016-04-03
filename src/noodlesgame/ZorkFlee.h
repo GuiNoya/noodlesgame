@@ -22,7 +22,7 @@
 
 using namespace std;
 
-class ZorkUL : public QMainWindow {
+class ZorkFlee : public QMainWindow {
     Q_OBJECT
 
     private:
@@ -72,8 +72,8 @@ class ZorkUL : public QMainWindow {
         void animate();
 
     public:
-        ZorkUL(QWidget *parent = 0);
-        ~ZorkUL();
+        ZorkFlee(QWidget *parent = 0);
+        ~ZorkFlee();
         void play();
         static const int EXIT_CODE_RESTART = -7158258;
 };
