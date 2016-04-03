@@ -18,7 +18,6 @@ class Item {
         string name;
         string description;
         QRect rect;
-        QRect initialRect;
         QImage image;
 
     public:
@@ -28,7 +27,6 @@ class Item {
         string getDescription();
         QRect getRect();
         QImage& getImage();
-        void setDrawableStatus(bool status);
         string toString();
 };
 

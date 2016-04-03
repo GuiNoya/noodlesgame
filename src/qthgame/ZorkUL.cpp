@@ -6,8 +6,9 @@
 
 using namespace std;
 
-ZorkUL::ZorkUL(QWidget *parent) : QMainWindow(parent), player("Main Character", 0, 0, "player.png"), changedRoom(true) {
+ZorkUL::ZorkUL(QWidget *parent) : QMainWindow(parent), player("Main Character", 0, 0, "player.png"), gameLogo(ASSET((string)"game.png")) {
     createGame();
+
     setWindowTitle(QString::fromUtf8("Horror/Action/Turn Game, written in C++ and Qt!"));
     setStyleSheet("background-color:black;");
     setFixedSize(1100, 600);
@@ -1031,11 +1032,11 @@ void ZorkUL::createEvents() {
 
 
 void ZorkUL::createItems(){
-    items["pipe"] = new Item(0, "Pipe", "old broken pipe");
-    items["key"] = new Item(1, "Key", "");
-    items["scalpel"] = new Item(2, "Scalpel", "");
-    items["passcode"] = new Item(3, "Passcode", "piece of paper with 4 numbers");
-    items["flashlight"] = new Item(4, "Flashlight", "");
+    items["pipe"] = new Item(0, "Pipe", "old broken pipe", QRect(0,0,0,0));
+    items["key"] = new Item(1, "Key", "", QRect(322,247,12,12), "key.png");
+    items["scalpel"] = new Item(2, "Scalpel", "", QRect(70,177,13,3), "scalpel.png");
+    items["passcode"] = new Item(3, "Passcode", "piece of paper with 4 numbers", QRect(170,5,15,3), "passcode.png");
+    items["flashlight"] = new Item(4, "Flashlight", "", QRect(109,307,7,8), "flashlight.png");
 
     CORR(1)->addItem(items["pipe"]);
     ROOM(5)->addItem(items["key"]);
@@ -1063,7 +1064,6 @@ void ZorkUL::changeRoom(Gateway* gateway) {
     Room* nextRoom = gateway->getOtherRoom(currentRoom);
 
     if (nextRoom != NULL) {
-        changedRoom = true;
         destRoom = nextRoom;
         timer->start(ANIMATION_DELAY);
     }
@@ -1668,9 +1668,12 @@ inline void ZorkUL::createGateway(int id, Room* r1, Room* r2, bool locked) {
     r2->addGateway(g);
 }
 
-inline void ZorkUL::drawItems(QPainter& painter, vector<Item*> items) {
-    for (Item* i : items) {
-        painter.drawImage(i->getRect(), i->getImage());
+inline void ZorkUL::drawItems(QPainter& painter, Room *room) {
+    QPoint roomPos = room->getRect().topLeft();
+    for (Item* i : room->getItems()) {
+        QRect rect = i->getRect();
+        rect.translate(roomPos);
+        painter.drawImage(rect, i->getImage());
     }
 }
 
@@ -1690,10 +1693,12 @@ void ZorkUL::paintEvent(QPaintEvent* e) {
 
     QPainter painter(this);
 
+    painter.drawImage(gameLogo.rect(), gameLogo);
+
     // Draw every room
     for (Room* room : rooms) {
         painter.drawImage(room->getRect(), room->getImage());
-        drawItems(painter, room->getItems());
+        drawItems(painter, room);
     }
 
     // Draw the overlays
@@ -1757,7 +1762,6 @@ void ZorkUL::keyPressEvent(QKeyEvent *e) {
     if (!timer->isActive()) {
         vector<Event::Option*> options = showingEvent->getEnabledOptions();
         if ((e->key() > Qt::Key_0) && (e->key() < (int) (Qt::Key_1 + options.size()))) {
-            changedRoom = false;
             Event::Option* option = options[e->key() - Qt::Key_1];
             performOption(option);
             repaint();

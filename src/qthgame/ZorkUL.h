@@ -32,7 +32,7 @@ class ZorkUL : public QMainWindow {
         vector<Gateway*> gateways;
         map<int, Event*> events;
         map<string, Item*> items;
-        bool changedRoom;
+        const QImage gameLogo;
 
         //flags
         bool enemyOnRoom4 = false;
@@ -56,7 +56,7 @@ class ZorkUL : public QMainWindow {
         static const int ANIMATION_DELAY = 100;
 
         inline void createGateway(int id, Room* r1, Room* r2, bool locked) __attribute__((always_inline));
-        inline void drawItems(QPainter& painter, vector<Item*> items);
+        inline void drawItems(QPainter& painter, Room *room);
         inline void EVENT(int id, string message, initializer_list<Event::Option*> list);
         inline Event::Option* OPTION(int id, string message);
 
