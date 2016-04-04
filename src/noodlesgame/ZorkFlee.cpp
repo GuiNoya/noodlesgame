@@ -6,7 +6,10 @@
 
 using namespace std;
 
-ZorkFlee::ZorkFlee(QWidget *parent) : QMainWindow(parent), player("Main Character", 0, 0, "player.png"), gameLogo(ASSET((string)"game.png")) {
+ZorkFlee::ZorkFlee(QWidget *parent) :
+        QMainWindow(parent), player("Main Character", 0, 0, "player.png"), enemy("Player's Enemy", 0, 0, "enemy.png"),
+        gameLogo(ASSET((string)"game.png")) {
+
     createGame();
 
     setWindowTitle(QString::fromUtf8("FLEE (if you can)"));
@@ -42,6 +45,7 @@ void ZorkFlee::createGame() {
     currentRoom = ROOM(1);
     _SE events[1];
     player.setPosition(currentRoom->getPlayerPositionAbs());
+    enemy.setPosition(ROOM(5)->getPlayerPositionAbs());
 }
 
 void ZorkFlee::createRooms() {
@@ -1099,7 +1103,7 @@ void ZorkFlee::performOption(Event::Option* option) {
             changeRoom(gateways[1]);
             break;
         case 19:
-            if (enemyOnRoom4){
+            if (enemy.isOnRoom4()){
                 events[19]->disableOption(1);
                 events[19]->enableOption(2);
                 events[19]->disableOption(3);
@@ -1113,11 +1117,11 @@ void ZorkFlee::performOption(Event::Option* option) {
                 events[19]->disableOption(2);
                 events[19]->enableOption(3);
             }
-            if (enemyDown || enemyOnRoom5){
+            if (enemy.isDown() || enemy.isOnRoom5()){
                 events[19]->disableOption(5);
                 events[19]->disableOption(6);
                 events[19]->enableOption(7);
-            } else if (enemyOnRoom4){
+            } else if (enemy.isOnRoom4()){
                 events[19]->disableOption(5);
                 events[19]->enableOption(6);
                 events[19]->disableOption(7);
@@ -1153,7 +1157,7 @@ void ZorkFlee::performOption(Event::Option* option) {
                 events[22]->enableOption(0);
                 events[22]->disableOption(1);
             }
-            if (enemyOnRoom4){
+            if (enemy.isOnRoom4()){
                 events[22]->disableOption(2);
                 events[22]->enableOption(3);
                 events[22]->disableOption(4);
@@ -1167,7 +1171,7 @@ void ZorkFlee::performOption(Event::Option* option) {
                 events[22]->disableOption(3);
                 events[22]->enableOption(4);
             }
-            if (enemyOnRoom4 || enemyDown){
+            if (enemy.isOnRoom4() || enemy.isDown()){
                 events[22]->disableOption(6);
                 events[22]->enableOption(7);
             } else {
@@ -1181,7 +1185,7 @@ void ZorkFlee::performOption(Event::Option* option) {
             } else {
                 events[25]->enableOption(0);
             }
-            if (enemyOnRoom4){
+            if (enemy.isOnRoom4()){
                 events[25]->disableOption(1);
                 events[25]->enableOption(2);
                 events[25]->disableOption(3);
@@ -1195,7 +1199,7 @@ void ZorkFlee::performOption(Event::Option* option) {
                 events[25]->disableOption(2);
                 events[25]->enableOption(3);
             }
-            if (enemyOnRoom4 || enemyDown){
+            if (enemy.isOnRoom4() || enemy.isDown()){
                 events[25]->disableOption(5);
                 events[25]->enableOption(6);
             } else {
@@ -1219,7 +1223,7 @@ void ZorkFlee::performOption(Event::Option* option) {
             break;
         case 28:
             changeRoom(gateways[6]);
-            enemyOnRoom4 = true;
+            enemy.setEnemyOnRoom4(true);
             break;
         case 31:
             changeRoom(gateways[6]);
@@ -1231,7 +1235,7 @@ void ZorkFlee::performOption(Event::Option* option) {
             gameOver = true;
             break;
         case 34:
-            enemyDown = true;
+            enemy.setEnemyDown(true);
             break;
         case 35:
             if (currentRoom == ROOM(4)){
@@ -1244,7 +1248,7 @@ void ZorkFlee::performOption(Event::Option* option) {
             }
             else if (currentRoom == CORR(3))
                 changeRoom(gateways[6]);
-            if (enemyOnRoom4){
+            if (enemy.isOnRoom4()){
                 events[35]->disableOption(1);
                 events[35]->enableOption(2);
                 events[35]->disableOption(3);
@@ -1261,14 +1265,14 @@ void ZorkFlee::performOption(Event::Option* option) {
             break;
         case 36:
             changeRoom(gateways[7]);
-            hasReachedCorner = true;
+            player.setReachedCorner(true);
             break;
         case 38:
             if (currentRoom == CORR(2))
                 changeRoom(gateways[6]);
             else if (currentRoom == CORR(4))
                 changeRoom(gateways[7]);
-            if (!hasReachedCorner){
+            if (!player.hasReachedCorner()){
                 events[38]->enableOption(1);
                 events[38]->disableOption(2);
             } else {
@@ -1288,7 +1292,7 @@ void ZorkFlee::performOption(Event::Option* option) {
                 events[40]->enableOption(2);
                 events[40]->disableOption(3);
             }
-            if (enemyReturn){
+            if (enemy.hasReturned()){
                 events[40]->disableOption(0);
                 events[40]->enableOption(1);
             } else {
@@ -1303,7 +1307,7 @@ void ZorkFlee::performOption(Event::Option* option) {
             changeRoom(gateways[9]);
             break;
         case 43:
-            if (enemyReturn){
+            if (enemy.hasReturned()){
                 events[43]->disableOption(1);
                 events[43]->enableOption(2);
             } else {
@@ -1319,7 +1323,7 @@ void ZorkFlee::performOption(Event::Option* option) {
                 events[44]->enableOption(3);
                 events[44]->disableOption(4);
             }
-            if (enemyReturn){
+            if (enemy.hasReturned()){
                 events[44]->disableOption(1);
                 events[44]->enableOption(2);
             } else {
@@ -1337,7 +1341,7 @@ void ZorkFlee::performOption(Event::Option* option) {
                 events[45]->enableOption(3);
                 events[45]->disableOption(4);
             }
-            if (enemyReturn){
+            if (enemy.hasReturned()){
                 events[45]->disableOption(1);
                 events[45]->enableOption(2);
             } else {
@@ -1353,7 +1357,7 @@ void ZorkFlee::performOption(Event::Option* option) {
                 events[46]->enableOption(2);
                 events[46]->disableOption(2);
             }
-            if (enemyReturn){
+            if (enemy.hasReturned()){
                 events[46]->disableOption(0);
                 events[46]->enableOption(1);
             } else {
@@ -1363,7 +1367,7 @@ void ZorkFlee::performOption(Event::Option* option) {
             break;
         case 47:
             if (!player.hasItem(items["key"])){
-                if (!enemyDown) enemyReturn = true;
+                if (!enemy.isDown()) enemy.setEnemyReturn(true);
                 events[47]->disableOption(0);
             } else {
                 events[47]->enableOption(0);
@@ -1384,7 +1388,7 @@ void ZorkFlee::performOption(Event::Option* option) {
             break;
         case 50:
             changeRoom(gateways[10]);
-            if (enemyDown){
+            if (enemy.isDown()){
                 events[50]->enableOption(1);
                 events[50]->disableOption(2);
                 events[50]->disableOption(3);
@@ -1401,7 +1405,7 @@ void ZorkFlee::performOption(Event::Option* option) {
         case 51:
             player.addItem(items["key"]);
             ROOM(5)->removeItem(items["key"]);
-            if (enemyReturn){
+            if (enemy.hasReturned()){
                 events[51]->disableOption(0);
                 events[51]->enableOption(1);
             } else {
@@ -1410,7 +1414,7 @@ void ZorkFlee::performOption(Event::Option* option) {
             }
             break;
         case 52:
-            if (enemyReturn){
+            if (enemy.hasReturned()){
                 events[52]->disableOption(0);
                 events[52]->enableOption(1);
             } else {
@@ -1426,7 +1430,7 @@ void ZorkFlee::performOption(Event::Option* option) {
                 events[53]->enableOption(3);
                 events[53]->disableOption(4);
             }
-            if (enemyReturn){
+            if (enemy.hasReturned()){
                 events[53]->disableOption(1);
                 events[53]->enableOption(2);
             } else {
@@ -1444,7 +1448,7 @@ void ZorkFlee::performOption(Event::Option* option) {
                 events[54]->enableOption(2);
                 events[54]->disableOption(3);
             }
-            if (enemyReturn){
+            if (enemy.hasReturned()){
                 events[54]->disableOption(0);
                 events[54]->enableOption(1);
             } else {
@@ -1476,7 +1480,7 @@ void ZorkFlee::performOption(Event::Option* option) {
                 events[58]->enableOption(3);
                 events[58]->disableOption(4);
             }
-            if (enemyReturn){
+            if (enemy.hasReturned()){
                 events[58]->disableOption(1);
                 events[58]->enableOption(2);
             } else {
@@ -1524,8 +1528,8 @@ void ZorkFlee::performOption(Event::Option* option) {
             ROOM(6)->removeItem(items["passcode"]);
             break;
         case 66:
-            enemyOnRoom5 = true;
-            enemyOnRoom4 = false;
+            enemy.setEnemyOnRoom5(true);
+            enemy.setEnemyOnRoom4(false);
             changeRoom(gateways[9]);
             break;
         case 67:
@@ -1536,7 +1540,7 @@ void ZorkFlee::performOption(Event::Option* option) {
                 changeRoom(gateways[9]);
             else if (currentRoom == CORR(3))
                 changeRoom(gateways[7]);
-            if (enemyOnRoom5){
+            if (enemy.isOnRoom5()){
                 events[68]->enableOption(0);
                 events[68]->disableOption(1);
             } else {
@@ -1585,7 +1589,7 @@ void ZorkFlee::performOption(Event::Option* option) {
                 events[81]->enableOption(2);
                 events[81]->disableOption(3);
             }
-            if (enemyReturn){
+            if (enemy.hasReturned()){
                 events[81]->disableOption(0);
                 events[81]->enableOption(1);
             } else {
@@ -1618,8 +1622,8 @@ void ZorkFlee::performOption(Event::Option* option) {
             break;
         case 93:
             changeRoom(gateways[8]);
-            enemyOnRoom4 = false;
-            enemyOnRoom5 = false;
+            enemy.setEnemyOnRoom4(false);
+            enemy.setEnemyOnRoom5(false);
             if (!player.hasItem(items["pipe"]))
                 events[93]->disableOption(2);
             else
@@ -1636,8 +1640,8 @@ void ZorkFlee::performOption(Event::Option* option) {
             gameOver = true;
             break;
         case 96:
-            enemyDown = true;
-            enemyReturn = false;
+            enemy.setEnemyDown(true);
+            enemy.setEnemyReturn(false);
             break;
         case 97:
             gameOver = true;
@@ -1700,6 +1704,9 @@ void ZorkFlee::paintEvent(QPaintEvent* e) {
         drawItems(painter, room);
     }
 
+    // Draw enemy
+    painter.drawImage(enemy.getRect(), enemy.getImage());
+
     // Draw the overlays
     for (Room* room : rooms) { // The separate loop is to draw items below all overlays
         if ((room == currentRoom || room == destRoom) && room == ROOM(3) && !ROOM(3)->isVisible()){
@@ -1725,6 +1732,7 @@ void ZorkFlee::paintEvent(QPaintEvent* e) {
 
     // Draw player
     painter.drawImage(player.getRect(), player.getImage());
+
 
     // If not in movement, draw the text
     if (!timer->isActive()) {
@@ -1789,6 +1797,7 @@ void ZorkFlee::animate() {
     if (!player.isMoving()) {
         player.setAnimation(destRoom->getPlayerPositionAbs(), ANIMATION_STEP);
     }
+    enemy.update();
     bool finished = player.update();
     if (finished) {
         timer->stop();

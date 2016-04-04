@@ -1,37 +1,14 @@
 #include "Player.h"
 
-Player::Player(string name, int x, int y, string filename) :
-    name(name), rect(x, y, PLAYER_HEIGHT, PLAYER_WIDTH), image(ASSET(filename)), moving(false) {
+Player::Player(string name, int x, int y, string filename) : Character(name, x, y, filename) {
 }
 
-string Player::getName() {
-    return this->name;
+void Player::setReachedCorner(bool b) {
+    reachedCorner = b;
 }
 
-QRectF Player::getRect() {
-    return rect;
-}
-
-QImage& Player::getImage() {
-    return image;
-}
-
-bool Player::isMoving() {
-    return moving;
-}
-
-void Player::setPosition(int x, int y) {
-    rect.moveTo(x, y);
-}
-
-void Player::setPosition(const QPoint point) {
-    rect.moveTo(point);
-}
-
-void Player::setAnimation(const QPoint dest, double step) {
-    direction = (dest - rect.topLeft()) * step;
-    this->dest = dest;
-    moving = true;
+bool Player::hasReachedCorner() {
+    return reachedCorner;
 }
 
 void Player::addItem(Item *item) {
@@ -51,25 +28,6 @@ bool Player::hasItem(Item *item){
         if ((*i) == item) return true;
     }
     return false;
-}
-
-bool Player::update() {
-    if (moving) {
-        QPointF diff = dest - rect.topLeft();
-        int x = abs(diff.x());
-        int dx = abs(direction.x());
-        int y = abs(diff.y());
-        int dy = abs(direction.y());
-        if (dx >= x && dy >= y) {
-            moving = false;
-            rect.moveTo(dest);
-            return true;
-        } else {
-            rect.translate(direction);
-            return false;
-        }
-    }
-    return true;
 }
 
 string Player::toString() {

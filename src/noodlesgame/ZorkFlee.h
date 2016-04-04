@@ -18,6 +18,7 @@
 #include "Item.h"
 #include "Gateway.h"
 #include "Player.h"
+#include "Enemy.h"
 #include "Event.h"
 
 using namespace std;
@@ -27,6 +28,7 @@ class ZorkFlee : public QMainWindow {
 
     private:
         Player player;
+        Enemy enemy;
         Room *currentRoom;
         Room *destRoom;
         Event *showingEvent;
@@ -36,13 +38,7 @@ class ZorkFlee : public QMainWindow {
         map<string, Item*> items;
         const QImage gameLogo;
 
-        //flags
-        bool enemyOnRoom4 = false;
-        bool enemyOnRoom5 = false;
-        bool hasReachedCorner = false;
         bool gameOver = false;
-        bool enemyDown = false;
-        bool enemyReturn = false;
 
         void createGame();
         void createRooms();

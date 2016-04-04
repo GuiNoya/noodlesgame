@@ -16,7 +16,9 @@ SOURCES += main.cpp\
     Gateway.cpp \
     Player.cpp \
     Event.cpp \
-    ZorkFlee.cpp
+    ZorkFlee.cpp \
+    Character.cpp \
+    Enemy.cpp
 
 HEADERS  += \
     Room.h \
@@ -25,7 +27,9 @@ HEADERS  += \
     Player.h \
     Event.h \
     Defines.h \
-    ZorkFlee.h
+    ZorkFlee.h \
+    Character.h \
+    Enemy.h
 
 DISTFILES +=
 
