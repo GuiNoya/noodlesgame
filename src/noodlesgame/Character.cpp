@@ -4,6 +4,14 @@ Character::Character(string name, int x, int y, string filename) :
     name(name), rect(x, y, CHARACTER_HEIGHT, CHARACTER_WIDTH), image(ASSET(filename)), moving(false) {
 }
 
+Character::~Character() {
+    while (!nextSteps.empty()) {
+        AnimationStep* i = nextSteps.front();
+        delete i;
+        nextSteps.pop();
+    }
+}
+
 string Character::getName() {
     return this->name;
 }
@@ -24,14 +32,19 @@ void Character::setPosition(int x, int y) {
     rect.moveTo(x, y);
 }
 
-void Character::setPosition(const QPoint point) {
+void Character::setPosition(const QPointF point) {
     rect.moveTo(point);
 }
 
-void Character::setAnimation(const QPoint dest, double step) {
-    direction = (dest - rect.topLeft()) * step;
-    this->dest = dest;
-    moving = true;
+void Character::addAnimation(const QPointF dest, int duration) {
+    if (!moving) {
+        float step = (float)ANIMATION_DELAY/duration;
+        direction = (dest - rect.topLeft()) * step;
+        this->dest = dest;
+        moving = true;
+    } else {
+        nextSteps.push(new AnimationStep(dest, duration));
+    }
 }
 
 bool Character::update() {
@@ -42,9 +55,19 @@ bool Character::update() {
         int y = abs(diff.y());
         int dy = abs(direction.y());
         if (dx >= x && dy >= y) {
-            moving = false;
             rect.moveTo(dest);
-            return true;
+            if (nextSteps.empty()) {
+                moving = false;
+                return true;
+            } else {
+                AnimationStep* animStep = nextSteps.front();
+                nextSteps.pop();
+                this->dest = animStep->point;
+                float step = (float)ANIMATION_DELAY/animStep->duration;
+                direction = (dest - rect.topLeft()) * step;
+                delete animStep;
+                return false;
+            }
         } else {
             rect.translate(direction);
             return false;

@@ -27,11 +27,11 @@ class Room {
         bool visible = false;
         QRect rect;
         QImage image;
-        QPoint playerPosition;
+        map<string, QPoint> positions;
 
     public:
         Room(string name);
-        Room(string name, QRect rect, string filename, int x, int y);
+        Room(string name, QRect rect, string filename);
         string toString();
 
         string getName();
@@ -39,7 +39,7 @@ class Room {
         vector<Room*> getViewableRooms();
         QRect getRect();
         QImage& getImage();
-        QPoint getPlayerPositionAbs();
+        QPoint getPosition(string id);
         bool isVisible();
         void setName(string name);
         void setVisible(bool visible);
@@ -47,6 +47,8 @@ class Room {
         void addGateway(Gateway* gateway);
         void addViewableRoom(Room* room);
         void addViewableRooms(initializer_list<Room*> rooms);
+        void addPosition(string id, const QPoint& position);
+        void addPosition(string id, const int x, const int y);
 
         void addItem(Item *item);
         bool removeItem(Item *item);

@@ -3,8 +3,8 @@
 Room::Room(string name) : name(name){
 }
 
-Room::Room(string name, QRect rect, string filename, int x, int y) :
-    name(name), rect(rect), image(ASSET(filename)), playerPosition(x, y) {
+Room::Room(string name, QRect rect, string filename) :
+    name(name), rect(rect), image(ASSET(filename)) {
 }
 
 string Room::toString() {
@@ -42,8 +42,13 @@ QImage& Room::getImage() {
     return image;
 }
 
-QPoint Room::getPlayerPositionAbs() {
-    return rect.topLeft() + playerPosition;
+QPoint Room::getPosition(string id) {
+    try {
+        return positions.at(id) + rect.topLeft();
+    } catch (out_of_range) {
+        cerr << "Could not get position! Room: " << name << ", Position ID: " << id << endl;
+        return rect.topLeft();
+    }
 }
 
 bool Room::isVisible() {
@@ -68,6 +73,14 @@ void Room::addViewableRoom(Room *room) {
 
 void Room::addViewableRooms(initializer_list<Room*> rooms) {
     for (auto r : rooms) viewableRooms.push_back(r);
+}
+
+void Room::addPosition(string id, const QPoint& position) {
+    positions[id] = position;
+}
+
+void Room::addPosition(string id, const int x, const int y) {
+    positions[id] = QPoint(x, y);
 }
 
 // Item related

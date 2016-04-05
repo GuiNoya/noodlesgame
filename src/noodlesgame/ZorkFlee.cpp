@@ -44,28 +44,78 @@ void ZorkFlee::createGame() {
 
     currentRoom = ROOM(1);
     _SE events[1];
-    player.setPosition(currentRoom->getPlayerPositionAbs());
-    enemy.setPosition(ROOM(5)->getPlayerPositionAbs());
+    player.setPosition(currentRoom->getPosition("initial"));
+    enemy.setPosition(ROOM(5)->getRect().topLeft() + ROOM(5)->getPosition("initial"));
 }
 
 void ZorkFlee::createRooms() {
     Room *r1, *r2, *r3, *r4, *r5, *r6, *r7;
     Room *c1, *c2, *c3, *c4, *c5, *c6, *c7;
 
-    r1 = new Room("Cell", QRect(548, 0, 103, 210), "R1.png", 30, 80);
-    r2 = new Room("Cell office", QRect(400, 0, 148, 210), "R2.png", 70, 70);
-    r3 = new Room("Dark Room", QRect(400, 210, 251, 115), "R3.png", 15, 85);
-    r4 = new Room("Storage Room", QRect(129, 0, 222, 325), "R4.png", 150, 200);
-    r5 = new Room("Surgical Room", QRect(0, 325, 351, 275), "R5.png", 285, 160);
-    r6 = new Room("Boxes Room", QRect(400, 325, 400, 226), "R6.png", 185, 160);
-    r7 = new Room("Courtyard", QRect(651, 0, 149, 325), "R7.png", 40, 240);
-    c1 = new Room("Initial Corridor", QRect(351, 0, 49, 161), "C1.png", 15, 70);
-    c2 = new Room("Second Corridor", QRect(351, 161, 49, 164), "C2.png", 15, 30);
-    c3 = new Room("Third Corridor", QRect(351, 325, 49, 141), "C3.png", 15, 25);
-    c4 = new Room("Corridor Corner", QRect(351, 466, 49, 134), "C4.png", 15, 15);
-    c5 = new Room("First Corridor on the Right", QRect(400, 551, 141, 49), "C5.png", 15, 15);
-    c6 = new Room("Middle Corridor on the Right", QRect(541, 551, 129, 49), "C6.png", 15, 15);
-    c7 = new Room("Last Corridor", QRect(670, 551, 130, 49), "C7.png", 15, 15);
+    r1 = new Room("Cell", QRect(548, 0, 103, 210), "R1.png");
+    r2 = new Room("Cell office", QRect(400, 0, 148, 210), "R2.png");
+    r3 = new Room("Dark Room", QRect(400, 210, 251, 115), "R3.png");
+    r4 = new Room("Storage Room", QRect(129, 0, 222, 325), "R4.png");
+    r5 = new Room("Surgical Room", QRect(0, 325, 351, 275), "R5.png");
+    r6 = new Room("Boxes Room", QRect(400, 325, 400, 226), "R6.png");
+    r7 = new Room("Courtyard", QRect(651, 0, 149, 325), "R7.png");
+    c1 = new Room("Initial Corridor", QRect(351, 0, 49, 161), "C1.png");
+    c2 = new Room("Second Corridor", QRect(351, 161, 49, 164), "C2.png");
+    c3 = new Room("Third Corridor", QRect(351, 325, 49, 141), "C3.png");
+    c4 = new Room("Corridor Corner", QRect(351, 466, 49, 134), "C4.png");
+    c5 = new Room("First Corridor on the Right", QRect(400, 551, 141, 49), "C5.png");
+    c6 = new Room("Middle Corridor on the Right", QRect(541, 551, 129, 49), "C6.png");
+    c7 = new Room("Last Corridor", QRect(670, 551, 130, 49), "C7.png");
+
+    r1->addPosition("initial", 56, 145);
+    r1->addPosition("window", 67, 62);
+    r1->addPosition("toilet", 42, 44);
+    r1->addPosition("bed", 18, 154);
+    r1->addPosition("bars", 8, 88);
+    r2->addPosition("initial", 108, 88);
+    r2->addPosition("water", 43, 10);
+    r2->addPosition("table", 81, 151);
+    r2->addPosition("door", 6, 65);
+    r3->addPosition("initial", 6, 47);
+    r3->addPosition("table", 77, 71);
+    r3->addPosition("debris", 176, 67);
+    r3->addPosition("tarp", 217, 78);
+    r4->addPosition("initial", 183, 206);
+    r4->addPosition("sink", 127, 245);
+    r4->addPosition("flashlight", 81, 286);
+    r4->addPosition("cabinet", 134, 135);
+    r4->addPosition("freezer", 84, 165);
+    r5->addPosition("initial", 313, 163);
+    r5->addPosition("desk", 292, 188);
+    r5->addPosition("sink", 259, 70);
+    r5->addPosition("stretcher", 200, 130);
+    r5->addPosition("garbage", 81, 307);
+    r5->addPosition("table", 30, 124);
+    r6->addPosition("initial", 178, 169);
+    r6->addPosition("walkaround1", 91, 136);
+    r6->addPosition("walkaround2", 278, 128);
+    r6->addPosition("bulletinboard", 172, 65);
+    r6->addPosition("passcode", 152, 10);
+    r7->addPosition("initial", 1, 268);
+    r7->addPosition("p1", 58, 239);
+    r7->addPosition("p2", 60, -30);
+    c1->addPosition("initial", 15, 65);
+    c1->addPosition("plant", 9, 30);
+    c1->addPosition("default", 10, 110);
+    c2->addPosition("initial", 10, 66);
+    c2->addPosition("leftdoor", 3, 44);
+    c2->addPosition("rightdoor", 16, 95);
+    c3->addPosition("initial", 10, 75);
+    c3->addPosition("window", 10, 101);
+    c4->addPosition("initial", 10, 40);
+    c4->addPosition("door", 4, 26);
+    c4->addPosition("corner", 10, 97);
+    c5->addPosition("initial", 85, 10);
+    c5->addPosition("default", 45, 10);
+    c6->addPosition("initial", 50, 10);
+    c6->addPosition("door", 42, 4);
+    c6->addPosition("window", 97, 14);
+    c7->addPosition("initial", 91, 11);
 
     rooms.push_back(r1);
     rooms.push_back(r2);
@@ -640,7 +690,7 @@ void ZorkFlee::createEvents() {
         }
     );
 
-    EVENT(57, "You are between the door and the window again.",
+    EVENT(57, "How did you ended up here? How do you get out? What is the meaning of life?",
         {
         OPTION(56, "Go back"),
         OPTION(57, "Keep divagating")
@@ -1062,24 +1112,54 @@ void ZorkFlee::printWelcome() {
     cout << currentRoom->toString() << endl;
 }
 
-void ZorkFlee::changeRoom(Gateway* gateway) {
+void ZorkFlee::changeRoom(Gateway* gateway, string currentRoomPosId, string nextPositionId) {
 
     Room* nextRoom = gateway->getOtherRoom(currentRoom);
 
     if (nextRoom != NULL) {
         destRoom = nextRoom;
+        if (currentRoomPosId != "" ) // TODO: Checar se esta na mesma posicao da sala atual
+            player.addAnimation(currentRoom->getPosition(currentRoomPosId), 1000);
+        player.addAnimation(destRoom->getPosition(nextPositionId), 1000);
         timer->start(ANIMATION_DELAY);
+        //runAnimation(player, destRoom->getPosition(nextPositionId));
     }
+}
+
+inline void ZorkFlee::runAnimation(Character& character, QPoint nextPosition, int timeMs) {
+    character.addAnimation(nextPosition, timeMs);
+    timer->start(ANIMATION_DELAY);
 }
 
 void ZorkFlee::performOption(Event::Option* option) {
     switch (option->id) {
+        case 3:
+            runAnimation(player, currentRoom->getPosition("window"));
+            break;
+        case 4:
+            runAnimation(player, currentRoom->getPosition("toilet"));
+            break;
+        case 5:
+            runAnimation(player, currentRoom->getPosition("bars"));
+            break;
+        case 7:
+            runAnimation(player, currentRoom->getPosition("bed"));
+            break;
         case 11:
             gateways[0]->setLocked(false);
-            changeRoom(gateways[0]);
+            changeRoom(gateways[0], "", "initial");
+            break;
+        case 12:
+            runAnimation(player, currentRoom->getPosition("water"));
+            break;
+        case 13:
+            runAnimation(player, currentRoom->getPosition("table"));
+            break;
+        case 14:
+            runAnimation(player, currentRoom->getPosition("table"));
             break;
         case 15:
-            changeRoom(gateways[1]);
+            changeRoom(gateways[1], "door", "initial");
             if (player.hasItem(items["pipe"])){
                 events[15]->disableOption(1);
                 events[15]->enableOption(2);
@@ -1090,6 +1170,7 @@ void ZorkFlee::performOption(Event::Option* option) {
             }
             break;
         case 16:
+            runAnimation(player, currentRoom->getPosition("plant"));
             if (player.hasItem(items["pipe"]) || player.hasItem(items["passcode"])){
                 events[16]->disableOption(0);
                 events[16]->enableOption(1);
@@ -1099,8 +1180,11 @@ void ZorkFlee::performOption(Event::Option* option) {
                 events[16]->disableOption(1);
             }
             break;
+        case 17:
+            runAnimation(player, currentRoom->getPosition("plant"));
+            break;
         case 18:
-            changeRoom(gateways[1]);
+            changeRoom(gateways[1], "initial", "door");
             break;
         case 19:
             if (enemy.isOnRoom4()){
@@ -1130,7 +1214,7 @@ void ZorkFlee::performOption(Event::Option* option) {
                 events[19]->disableOption(6);
                 events[19]->disableOption(7);
             }
-            changeRoom(gateways[2]);
+            changeRoom(gateways[2], "", "initial");
             break;
         case 20:
             player.addItem(items["pipe"]);
@@ -1138,9 +1222,9 @@ void ZorkFlee::performOption(Event::Option* option) {
             break;
         case 21:
             if (currentRoom == ROOM(2))
-                changeRoom(gateways[1]);
+                changeRoom(gateways[1], "door", "initial");
             else if (currentRoom == CORR(2))
-                changeRoom(gateways[2]);
+                changeRoom(gateways[2], "", "default");
             if (player.hasItem(items["pipe"]) || player.hasItem(items["passcode"])){
                 events[21]->disableOption(1);
                 events[21]->enableOption(2);
@@ -1150,6 +1234,7 @@ void ZorkFlee::performOption(Event::Option* option) {
             }
             break;
         case 22:
+            runAnimation(player, currentRoom->getPosition("rightdoor"));
             if (player.hasItem(items["flashlight"])){
                 events[22]->disableOption(0);
                 events[22]->enableOption(1);
@@ -1178,6 +1263,12 @@ void ZorkFlee::performOption(Event::Option* option) {
                 events[22]->enableOption(6);
                 events[22]->disableOption(7);
             }
+            break;
+        case 23:
+            runAnimation(player, currentRoom->getPosition("leftdoor"));
+            break;
+        case 24:
+            runAnimation(player, currentRoom->getPosition("window"));
             break;
         case 25:
             if (!player.hasItem(items["flashlight"])){
@@ -1208,7 +1299,7 @@ void ZorkFlee::performOption(Event::Option* option) {
             }
             break;
         case 26:
-            changeRoom(gateways[6]);
+            changeRoom(gateways[6], "", "initial");
             if (player.hasItem(items["pipe"])){
                 events[26]->disableOption(0);
                 events[26]->enableOption(1);
@@ -1222,11 +1313,14 @@ void ZorkFlee::performOption(Event::Option* option) {
             gameOver = true;
             break;
         case 28:
-            changeRoom(gateways[6]);
+            changeRoom(gateways[6], "", "initial"); // TODO: better animation
             enemy.setEnemyOnRoom4(true);
             break;
+        case 30:
+            runAnimation(player, currentRoom->getPosition("leftdoor"));
+            break;
         case 31:
-            changeRoom(gateways[6]);
+            changeRoom(gateways[6], "", "window");
             break;
         case 32:
             gameOver = true;
@@ -1239,15 +1333,15 @@ void ZorkFlee::performOption(Event::Option* option) {
             break;
         case 35:
             if (currentRoom == ROOM(4)){
-                changeRoom(gateways[5]);
+                changeRoom(gateways[5], "initial", "leftdoor");
                 gateways[5]->setLocked(true);
             }
             else if (currentRoom == ROOM(3)){
-                changeRoom(gateways[3]);
+                changeRoom(gateways[3], "initial", "rightdoor");
                 ROOM(3)->setVisible(false);
             }
             else if (currentRoom == CORR(3))
-                changeRoom(gateways[6]);
+                changeRoom(gateways[6], "",  "initial");
             if (enemy.isOnRoom4()){
                 events[35]->disableOption(1);
                 events[35]->enableOption(2);
@@ -1264,14 +1358,17 @@ void ZorkFlee::performOption(Event::Option* option) {
             }
             break;
         case 36:
-            changeRoom(gateways[7]);
+            changeRoom(gateways[7], "", "initial");
             player.setReachedCorner(true);
+            break;
+        case 37:
+            runAnimation(player, currentRoom->getPosition("door"));
             break;
         case 38:
             if (currentRoom == CORR(2))
-                changeRoom(gateways[6]);
+                changeRoom(gateways[6], "", "window");
             else if (currentRoom == CORR(4))
-                changeRoom(gateways[7]);
+                changeRoom(gateways[7], "", "window");
             if (!player.hasReachedCorner()){
                 events[38]->enableOption(1);
                 events[38]->disableOption(2);
@@ -1281,10 +1378,10 @@ void ZorkFlee::performOption(Event::Option* option) {
             }
             break;
         case 39:
-            changeRoom(gateways[9]);
+            changeRoom(gateways[9], "corner", "initial");
             break;
         case 40:
-            changeRoom(gateways[8]);
+            changeRoom(gateways[8], "door", "initial");
             if (player.hasItem(items["key"])){
                 events[40]->disableOption(2);
                 events[40]->enableOption(3);
@@ -1301,12 +1398,13 @@ void ZorkFlee::performOption(Event::Option* option) {
             }
             break;
         case 41:
-            changeRoom(gateways[10]);
+            changeRoom(gateways[10], "", "initial");
             break;
         case 42:
-            changeRoom(gateways[9]);
+            changeRoom(gateways[9], "initial", "corner");
             break;
         case 43:
+            runAnimation(player, currentRoom->getPosition("desk"));
             if (enemy.hasReturned()){
                 events[43]->disableOption(1);
                 events[43]->enableOption(2);
@@ -1316,6 +1414,7 @@ void ZorkFlee::performOption(Event::Option* option) {
             }
             break;
         case 44:
+            runAnimation(player, currentRoom->getPosition("stretcher"));
             if (player.hasItem(items["key"])){
                 events[44]->disableOption(3);
                 events[44]->enableOption(4);
@@ -1332,6 +1431,7 @@ void ZorkFlee::performOption(Event::Option* option) {
             }
             break;
         case 45:
+            runAnimation(player, currentRoom->getPosition("table"));
             if (player.hasItem(items["scalpel"]))
                 events[45]->disableOption(0);
             if (player.hasItem(items["key"])){
@@ -1350,6 +1450,7 @@ void ZorkFlee::performOption(Event::Option* option) {
             }
             break;
         case 46:
+            runAnimation(player, currentRoom->getPosition("garbage"));
             if (player.hasItem(items["key"])){
                 events[46]->disableOption(2);
                 events[46]->enableOption(3);
@@ -1366,6 +1467,7 @@ void ZorkFlee::performOption(Event::Option* option) {
             }
             break;
         case 47:
+            runAnimation(player, currentRoom->getPosition("door"));
             if (!player.hasItem(items["key"])){
                 if (!enemy.isDown()) enemy.setEnemyReturn(true);
                 events[47]->disableOption(0);
@@ -1375,6 +1477,7 @@ void ZorkFlee::performOption(Event::Option* option) {
 
             break;
         case 48:
+            runAnimation(player, currentRoom->getPosition("window"));
             if (gateways[12]->isLocked()){
                 events[48]->enableOption(0);
                 events[48]->disableOption(1);
@@ -1384,10 +1487,10 @@ void ZorkFlee::performOption(Event::Option* option) {
             }
             break;
         case 49:
-            changeRoom(gateways[11]);
+            changeRoom(gateways[11], "", "initial");
             break;
         case 50:
-            changeRoom(gateways[10]);
+            changeRoom(gateways[10], "", "default");
             if (enemy.isDown()){
                 events[50]->enableOption(1);
                 events[50]->disableOption(2);
@@ -1414,6 +1517,7 @@ void ZorkFlee::performOption(Event::Option* option) {
             }
             break;
         case 52:
+            runAnimation(player, currentRoom->getPosition("desk"));
             if (enemy.hasReturned()){
                 events[52]->disableOption(0);
                 events[52]->enableOption(1);
@@ -1461,9 +1565,9 @@ void ZorkFlee::performOption(Event::Option* option) {
             break;
         case 56:
             if (currentRoom == CORR(5))
-                changeRoom(gateways[10]);
+                changeRoom(gateways[10], "", "initial");
             else if (currentRoom == CORR(7))
-                changeRoom(gateways[11]);
+                changeRoom(gateways[11], "", "initial");
             if (gateways[12]->isLocked()){
                 events[56]->enableOption(0);
                 events[56]->disableOption(1);
@@ -1489,11 +1593,13 @@ void ZorkFlee::performOption(Event::Option* option) {
             }
             break;
          case 59:
-            changeRoom(gateways[12]);
+            changeRoom(gateways[12], "door", "initial");
             break;
         case 60:
             if (currentRoom == CORR(6))
-                changeRoom(gateways[12]);
+                changeRoom(gateways[12], "door", "initial");
+            else
+                runAnimation(player, currentRoom->getPosition("walkaround1"));
             if (player.hasItem(items["passcode"])){
                 events[60]->disableOption(0);
                 events[60]->enableOption(1);
@@ -1503,6 +1609,7 @@ void ZorkFlee::performOption(Event::Option* option) {
             }
             break;
         case 61:
+            runAnimation(player, currentRoom->getPosition("bulletinboard"));
             if (player.hasItem(items["pipe"])){
                 events[61]->disableOption(0);
                 events[61]->enableOption(1);
@@ -1511,17 +1618,22 @@ void ZorkFlee::performOption(Event::Option* option) {
                 events[61]->disableOption(1);
             }
             break;
+        case 62:
+            runAnimation(player, currentRoom->getPosition("passcode"));
+            break;
         case 63:
             if (player.hasItem(items["passcode"])){
                 events[63]->disableOption(0);
                 events[63]->enableOption(1);
+                runAnimation(player, currentRoom->getPosition("walkaround1"));
             } else {
                 events[63]->enableOption(0);
                 events[63]->disableOption(1);
+                runAnimation(player, currentRoom->getPosition("walkaround2"));
             }
             break;
         case 64:
-           changeRoom(gateways[12]);
+           changeRoom(gateways[12], "initial", "door");
            break;
         case 65:
             player.addItem(items["passcode"]);
@@ -1530,16 +1642,16 @@ void ZorkFlee::performOption(Event::Option* option) {
         case 66:
             enemy.setEnemyOnRoom5(true);
             enemy.setEnemyOnRoom4(false);
-            changeRoom(gateways[9]);
+            changeRoom(gateways[9], "", "corner");
             break;
         case 67:
-            changeRoom(gateways[9]);
+            changeRoom(gateways[9], "", "initial");
             break;
         case 68:
             if (currentRoom == CORR(5))
-                changeRoom(gateways[9]);
+                changeRoom(gateways[9], "", "corner");
             else if (currentRoom == CORR(3))
-                changeRoom(gateways[7]);
+                changeRoom(gateways[7], "", "corner");
             if (enemy.isOnRoom5()){
                 events[68]->enableOption(0);
                 events[68]->disableOption(1);
@@ -1548,9 +1660,12 @@ void ZorkFlee::performOption(Event::Option* option) {
                 events[68]->enableOption(1);
             }
             break;
+        case 69:
+            runAnimation(player, currentRoom->getPosition("leftdoor"));
+            break;
         case 74:
             gateways[5]->setLocked(false);
-            changeRoom(gateways[5]);
+            changeRoom(gateways[5], "", "initial");
             if (player.hasItem(items["flashlight"])){
                 events[74]->disableOption(2);
                 events[74]->enableOption(3);
@@ -1560,6 +1675,7 @@ void ZorkFlee::performOption(Event::Option* option) {
             }
             break;
         case 75:
+            runAnimation(player, currentRoom->getPosition("cabinet"));
             if (player.hasItem(items["flashlight"])){
                 events[75]->disableOption(1);
                 events[75]->enableOption(2);
@@ -1568,7 +1684,14 @@ void ZorkFlee::performOption(Event::Option* option) {
                 events[75]->disableOption(2);
             }
             break;
+        case 76:
+            runAnimation(player, currentRoom->getPosition("sink"));
+            break;
+        case 77:
+            runAnimation(player, currentRoom->getPosition("sink"));
+            break;
         case 78:
+            runAnimation(player, currentRoom->getPosition("freezer"));
             if (player.hasItem(items["flashlight"])){
                 events[78]->disableOption(2);
                 events[78]->enableOption(3);
@@ -1577,11 +1700,15 @@ void ZorkFlee::performOption(Event::Option* option) {
                 events[78]->disableOption(3);
             }
             break;
+        case 79:
+            runAnimation(player, currentRoom->getPosition("flashlight"));
+            break;
         case 80:
             player.addItem(items["flashlight"]);
             ROOM(4)->removeItem(items["flashlight"]);
             break;
         case 81:
+            runAnimation(player, currentRoom->getPosition("sink"));
             if (player.hasItem(items["key"])){
                 events[81]->disableOption(2);
                 events[81]->enableOption(3);
@@ -1599,10 +1726,19 @@ void ZorkFlee::performOption(Event::Option* option) {
             break;
         case 82:
             if (currentRoom != ROOM(3))
-                changeRoom(gateways[3]);
+                changeRoom(gateways[3], "", "initial");
             break;
         case 83:
             ROOM(3)->setVisible(true);
+            break;
+        case 84:
+            runAnimation(player, currentRoom->getPosition("table"));
+            break;
+        case 85:
+            runAnimation(player, currentRoom->getPosition("debris"));
+            break;
+        case 86:
+            runAnimation(player, currentRoom->getPosition("tarp"));
             break;
         case 87:
             if (!player.hasItem(items["scalpel"]))
@@ -1614,14 +1750,14 @@ void ZorkFlee::performOption(Event::Option* option) {
             gateways[4]->setLocked(false);
             break;
         case 91:
-            changeRoom(gateways[4]);
+            changeRoom(gateways[4], "", "initial"); // TODO: game ending
             gameOver = true;
             break;
         case 92:
-            changeRoom(gateways[8]);
+            changeRoom(gateways[8], "initial", "corner");
             break;
         case 93:
-            changeRoom(gateways[8]);
+            changeRoom(gateways[8], "initial", "door");
             enemy.setEnemyOnRoom4(false);
             enemy.setEnemyOnRoom5(false);
             if (!player.hasItem(items["pipe"]))
@@ -1657,6 +1793,7 @@ void ZorkFlee::performOption(Event::Option* option) {
                 events[98]->enableOption(3);
             break;
         case 99:
+            runAnimation(player, currentRoom->getPosition("passcode"));
             player.removeItem(items["pipe"]);
             break;
         default: break;
@@ -1781,7 +1918,7 @@ void ZorkFlee::mouseReleaseEvent(QMouseEvent* e) {
 }
 
 void ZorkFlee::keyPressEvent(QKeyEvent *e) {
-    if (!timer->isActive() || !gameOver) {
+    if (!player.isMoving() || !gameOver) {
         vector<Event::Option*> options = showingEvent->getEnabledOptions();
         if ((e->key() > Qt::Key_0) && (e->key() < (int) (Qt::Key_1 + options.size()))) {
             Event::Option* option = options[e->key() - Qt::Key_1];
@@ -1794,20 +1931,19 @@ void ZorkFlee::keyPressEvent(QKeyEvent *e) {
 }
 
 void ZorkFlee::animate() {
-    if (!player.isMoving()) {
-        player.setAnimation(destRoom->getPlayerPositionAbs(), ANIMATION_STEP);
-    }
     enemy.update();
     bool finished = player.update();
     if (finished) {
         timer->stop();
-        if (destRoom != ROOM(3))
-            destRoom->setVisible(true);
-        for (auto r : destRoom->getViewableRooms()) {
-            r->setVisible(true);
+        if (destRoom) {
+            if (destRoom != ROOM(3))
+                destRoom->setVisible(true);
+            for (auto r : destRoom->getViewableRooms()) {
+                r->setVisible(true);
+            }
+            currentRoom = destRoom;
+            destRoom = 0;
         }
-        currentRoom = destRoom;
-        destRoom = 0;
     }
     repaint();
 }

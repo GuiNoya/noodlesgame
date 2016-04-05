@@ -30,7 +30,7 @@ class ZorkFlee : public QMainWindow {
         Player player;
         Enemy enemy;
         Room *currentRoom;
-        Room *destRoom;
+        Room *destRoom = 0;
         Event *showingEvent;
         vector<Room*> rooms;
         vector<Gateway*> gateways;
@@ -45,15 +45,14 @@ class ZorkFlee : public QMainWindow {
         void createEvents();
         void createItems();
         void printWelcome();
-        void changeRoom(Gateway* gateway);
+        void changeRoom(Gateway* gateway, string currentRoomPosId, string nextPositionId);
         Room* transit(Room* origin, Room* dest);
         void performOption(Event::Option* option);
 
         QTimer* timer;
-        static constexpr double ANIMATION_STEP = 1;
-        static const int ANIMATION_DELAY = 100;
 
         inline void createGateway(int id, Room* r1, Room* r2, bool locked) __attribute__((always_inline));
+        inline void runAnimation(Character& character, QPoint nextPosition, int timeMs = 1500);
         inline void drawItems(QPainter& painter, Room *room);
         inline void EVENT(int id, string message, initializer_list<Event::Option*> list);
         inline Event::Option* OPTION(int id, string message);
