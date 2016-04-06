@@ -18,8 +18,8 @@ class Gateway {
         Gateway(int id, Room* room1, Room* room2, bool locked=false);
         string toString();
         void setLocked(bool locked);
-        bool isLocked();
-        Room* getOtherRoom(Room* currentRoom);
+        bool isLocked() const;
+        Room* getOtherRoom(Room* currentRoom) const;
 };
 
 #endif // GATEWAY_H

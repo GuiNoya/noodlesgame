@@ -11,11 +11,15 @@ Event::~Event() {
     }
 }
 
-string Event::getMessage() {
+int Event::getId() const {
+    return id;
+}
+
+string Event::getMessage() const {
     return message;
 }
 
-vector<Event::Option*> Event::getOptions() {
+vector<Event::Option*> Event::getOptions() const {
     return options;
 }
 
@@ -42,7 +46,7 @@ void Event::enableOption(int i) {
     o->enabled = true;
 }
 
-vector<Event::Option*> Event::getEnabledOptions(){
+vector<Event::Option*> Event::getEnabledOptions() const {
     vector<Option*> r;
     for (auto i: options){
         if (i->enabled)

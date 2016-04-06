@@ -4,23 +4,23 @@ Item::Item(int id, string name, string description, QRect rect, string filename)
     : id(id), name(name), description(description), rect(rect), image(ASSET(filename)) {
 }
 
-int Item::getId() {
+int Item::getId() const {
     return id;
 }
 
-string Item::getName() {
+string Item::getName() const {
     return name;
 }
 
-string Item::getDescription() {
+string Item::getDescription() const {
     return description;
 }
 
-QRect Item::getRect() {
+QRect Item::getRect() const {
     return rect;
 }
 
-QImage& Item::getImage() {
+const QImage& Item::getImage() const {
     return image;
 }
 

@@ -22,23 +22,23 @@ string Room::toString() {
 }
 
 // Getters and Setters
-string Room::getName() {
+string Room::getName() const {
     return name;
 }
 
-vector<Item*> Room::getItems() {
+vector<Item*> Room::getItems() const {
     return items;
 }
 
-vector<Room*> Room::getViewableRooms() {
+vector<Room*> Room::getViewableRooms() const {
     return viewableRooms;
 }
 
-QRect Room::getRect() {
+QRect Room::getRect() const {
     return rect;
 }
 
-QImage& Room::getImage() {
+const QImage& Room::getImage() const {
     return image;
 }
 
@@ -51,7 +51,7 @@ QPoint Room::getPosition(string id) {
     }
 }
 
-bool Room::isVisible() {
+bool Room::isVisible() const {
     return visible;
 }
 
@@ -90,16 +90,8 @@ void Room::addItem(Item *item) {
     }
 }
 
-bool Room::removeItem(Item *item) {
-    vector<Item*>::iterator i = items.begin();
-    while (i != items.end()) {
-        if (*i == item) {
-            items.erase(i);
-            return true;
-        }
-        i++;
-    }
-    return false;
+void Room::removeItem(Item *item) {
+    FINDREMOVE(items, item);
 }
 
 bool Room::removeItem(int id) {
@@ -143,8 +135,4 @@ string Room::displayItems() {
     }
     tempString.erase(tempString.npos-1);
     return tempString;
-}
-
-int Room::numberOfItems() {
-    return items.size();
 }

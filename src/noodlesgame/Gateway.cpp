@@ -7,7 +7,7 @@ Gateway::Gateway(int id, Room* room1, Room* room2, bool locked/*=false*/)
 }
 
 string Gateway::toString() {
-    string str = "<item ID=";
+    string str = "<Gateway ID=";
     str += to_string(id);
     str += ", Rooms=";
     str += rooms[0]->toString();
@@ -22,11 +22,11 @@ void Gateway::setLocked(bool locked) {
     this->locked = locked;
 }
 
-bool Gateway::isLocked() {
+bool Gateway::isLocked() const {
     return locked;
 }
 
-Room* Gateway::getOtherRoom(Room* currentRoom) {
+Room* Gateway::getOtherRoom(Room* currentRoom) const {
     if (!this->locked) {
         if (currentRoom == rooms[0]) {
             return rooms[1];

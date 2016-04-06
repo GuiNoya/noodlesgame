@@ -22,11 +22,11 @@ class Item {
 
     public:
         Item(int id, string name, string description, QRect rect = QRect(), string filename = "");
-        int getId();
-        string getName();
-        string getDescription();
-        QRect getRect();
-        QImage& getImage();
+        int getId() const;
+        string getName() const;
+        string getDescription() const;
+        QRect getRect() const;
+        const QImage& getImage() const;
         string toString();
 };
 

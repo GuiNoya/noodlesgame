@@ -1,5 +1,5 @@
-#ifndef ACTION_H
-#define ACTION_H
+#ifndef EVENT_H
+#define EVENT_H
 
 #include <string>
 #include <vector>
@@ -10,7 +10,6 @@ using namespace std;
 class Event {
 
     public:
-        // This can be changed to use callback functions, a little more tricky
         struct Option {
             int id;
             string label;
@@ -20,14 +19,14 @@ class Event {
 
         Event(int id, string message);
         ~Event();
-        string getId();
-        string getMessage();
-        vector<Option*> getOptions();
+        int getId() const;
+        string getMessage() const;
+        vector<Option*> getOptions() const;
         void setMessage(string s);
         void addOption(Option *option);
         void disableOption(int i);
         void enableOption(int i);
-        vector<Option*> getEnabledOptions();
+        vector<Option*> getEnabledOptions() const;
 
     private:
         int id;
@@ -35,4 +34,4 @@ class Event {
         vector<Option*> options;
 };
 
-#endif // ACTION_H
+#endif // EVENT_H

@@ -1,5 +1,5 @@
-#ifndef ZORKUL_H_
-#define ZORKUL_H_
+#ifndef ZORKFLEE_H_
+#define ZORKFLEE_H_
 
 #include <iostream>
 #include <string>
@@ -37,19 +37,16 @@ class ZorkFlee : public QMainWindow {
         map<int, Event*> events;
         map<string, Item*> items;
         const QImage gameLogo;
-
         bool gameOver = false;
+        QTimer* timer;
 
         void createGame();
         void createRooms();
         void createEvents();
         void createItems();
-        void printWelcome();
+        void changeRoom(Gateway *gateway);
         void changeRoom(Gateway* gateway, string currentRoomPosId, string nextPositionId);
-        Room* transit(Room* origin, Room* dest);
         void performOption(Event::Option* option);
-
-        QTimer* timer;
 
         inline void createGateway(int id, Room* r1, Room* r2, bool locked) __attribute__((always_inline));
         inline void runAnimation(Character& character, QPoint nextPosition, int timeMs = 1500);
@@ -73,4 +70,4 @@ class ZorkFlee : public QMainWindow {
         static const int EXIT_CODE_RESTART = -7158258;
 };
 
-#endif /*ZORKUL_H_*/
+#endif // ZORKFLEE_H

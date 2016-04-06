@@ -34,13 +34,13 @@ class Room {
         Room(string name, QRect rect, string filename);
         string toString();
 
-        string getName();
-        vector<Item*> getItems();
-        vector<Room*> getViewableRooms();
-        QRect getRect();
-        QImage& getImage();
+        string getName() const;
+        vector<Item*> getItems() const;
+        vector<Room*> getViewableRooms() const;
+        QRect getRect() const;
+        const QImage& getImage() const;
         QPoint getPosition(string id);
-        bool isVisible();
+        bool isVisible() const;
         void setName(string name);
         void setVisible(bool visible);
 
@@ -51,12 +51,23 @@ class Room {
         void addPosition(string id, const int x, const int y);
 
         void addItem(Item *item);
-        bool removeItem(Item *item);
+        void removeItem(Item *item);
         bool removeItem(int id);
         bool isItemInRoom(Item *item);
         bool isItemInRoom(int id);
         string displayItems();
-        int numberOfItems();
+
+        Room* operator<<(Item* item) {
+            if (!isItemInRoom(item)) {
+                items.push_back(item);
+            }
+            return this;
+        }
+
+        Room* operator>>(Item* item) {
+            FINDREMOVE(items, item);
+            return this;
+        }
 };
 
-#endif
+#endif // ROOM_H_

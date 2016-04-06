@@ -7,7 +7,7 @@ void Player::setReachedCorner(bool b) {
     reachedCorner = b;
 }
 
-bool Player::hasReachedCorner() {
+bool Player::hasReachedCorner() const {
     return reachedCorner;
 }
 
@@ -16,14 +16,10 @@ void Player::addItem(Item *item) {
 }
 
 void Player::removeItem(Item *item) {
-    for (vector<Item*>::iterator i = inventory.begin(); i != inventory.end(); i++) {
-        if ((*i) == item) {
-            inventory.erase(i);
-        }
-    }
+    FINDREMOVE(inventory, item);
 }
 
-bool Player::hasItem(Item *item){
+bool Player::hasItem(Item *item) {
     for (vector<Item*>::iterator i = inventory.begin(); i != inventory.end(); i++) {
         if ((*i) == item) return true;
     }
