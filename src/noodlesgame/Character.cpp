@@ -37,7 +37,7 @@ void Character::setPosition(const QPointF point) {
     rect.moveTo(point);
 }
 
-void Character::addAnimation(const QPointF dest, int duration, const function<void()> c) {
+void Character::addAnimation(const QPointF dest, int duration, const function<void()>& c) {
     if (!moving) {
         float step = (float)ANIMATION_DELAY/duration;
         direction = (dest - rect.topLeft()) * step;
@@ -49,7 +49,7 @@ void Character::addAnimation(const QPointF dest, int duration, const function<vo
     }
 }
 
-void Character::addSleepAnimation(int duration, const function<void()> c) {
+void Character::addSleepAnimation(int duration, const function<void()>& c) {
     nextSteps.push(new AnimationStep(QPointF(), duration, c));
 }
 

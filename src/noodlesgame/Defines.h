@@ -11,7 +11,7 @@
 
 template<typename T>
 inline void FINDREMOVE(std::vector<T>& v, T& i) {
-    for (typename std::vector<T>::iterator j = v.begin(); j != v.end(); j++) {
+    for (typename std::vector<T>::iterator j = v.begin(); j != v.end(); ++j) {
         if (*j == i) {
             v.erase(j);
             break;

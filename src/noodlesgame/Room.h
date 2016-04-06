@@ -30,7 +30,6 @@ class Room {
         map<string, QPoint> positions;
 
     public:
-        Room(string name);
         Room(string name, QRect rect, string filename);
         string toString();
 

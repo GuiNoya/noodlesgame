@@ -16,7 +16,7 @@ class Character {
             const QPointF point;
             const int duration;
             const function<void()> callback;
-            AnimationStep(const QPointF p, const int d, const function<void()> c) : point(p), duration(d), callback(c) {}
+            AnimationStep(const QPointF p, const int d, const function<void()>& c) : point(p), duration(d), callback(c) {}
         };
 
         string name;
@@ -40,8 +40,8 @@ class Character {
         bool isMoving() const;
         void setPosition(int x, int y);
         void setPosition(const QPointF point);
-        void addAnimation(const QPointF dest, int duration, const function<void()> c=0);
-        void addSleepAnimation(int duration, const function<void()> c=0);
+        void addAnimation(const QPointF dest, int duration, const function<void()>& c=0);
+        void addSleepAnimation(int duration, const function<void()>& c=0);
         virtual bool update();
         virtual string toString();
 };

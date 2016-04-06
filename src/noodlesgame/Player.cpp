@@ -20,7 +20,7 @@ void Player::removeItem(Item *item) {
 }
 
 bool Player::hasItem(Item *item) {
-    for (vector<Item*>::iterator i = inventory.begin(); i != inventory.end(); i++) {
+    for (vector<Item*>::iterator i = inventory.begin(); i != inventory.end(); ++i) {
         if ((*i) == item) return true;
     }
     return false;
@@ -31,7 +31,7 @@ string Player::toString() {
     s += name;
     s += "\" Items=";
     if (inventory.size() > 0 ) {
-        for (vector<Item*>::iterator i = inventory.begin(); i != inventory.end(); i++) {
+        for (vector<Item*>::iterator i = inventory.begin(); i != inventory.end(); ++i) {
             s += (*i)->toString() + ", ";
         }
         s.erase(s.size()-2, 2);

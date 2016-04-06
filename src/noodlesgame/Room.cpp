@@ -1,8 +1,5 @@
 #include "Room.h"
 
-Room::Room(string name) : name(name){
-}
-
 Room::Room(string name, QRect rect, string filename) :
     name(name), rect(rect), image(ASSET(filename)) {
 }
@@ -10,7 +7,7 @@ Room::Room(string name, QRect rect, string filename) :
 string Room::toString() {
     string s = "<Room Name=" + name + ", Items=";
     if (items.size() > 0 ) {
-        for (vector<Item*>::iterator i = items.begin(); i != items.end(); i++) {
+        for (vector<Item*>::iterator i = items.begin(); i != items.end(); ++i) {
             s += (*i)->toString() + ", ";
         }
         s.erase(s.size()-2, 2);
@@ -101,7 +98,7 @@ bool Room::removeItem(int id) {
             items.erase(i);
             return true;
         }
-        i++;
+        ++i;
     }
     return false;
 }

@@ -22,16 +22,16 @@ ZorkFlee::ZorkFlee(QWidget *parent) :
 }
 
 ZorkFlee::~ZorkFlee() {
-    for (vector<Room*>::iterator i = rooms.begin(); i != rooms.end(); i++) {
+    for (vector<Room*>::iterator i = rooms.begin(); i != rooms.end(); ++i) {
         delete (*i);
     }
-    for (auto i = gateways.begin(); i != gateways.end(); i++) {
+    for (auto i = gateways.begin(); i != gateways.end(); ++i) {
         delete (*i);
     }
-    for (map<int, Event*>::iterator i = events.begin(); i != events.end(); i++) {
+    for (map<int, Event*>::iterator i = events.begin(); i != events.end(); ++i) {
         delete i->second;
     }
-    for (auto i = items.begin(); i != items.end(); i++) {
+    for (auto i = items.begin(); i != items.end(); ++i) {
         delete i->second;
     }
 
