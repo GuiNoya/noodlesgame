@@ -27,13 +27,13 @@ class Player : public Character {
         bool hasItem(Item* item);
         string toString() override;
 
-        // operator<< used with an Item* indicates to add the item to the player's inventory
+        // operator<< used with an Item*, adds the item to the player's inventory
         Player* operator<<(Item* item) {
             inventory.push_back(item);
             return this;
         }
 
-        // operator>> used with an Item* indicates to remove the item from the player's inventory
+        // operator>> used with an Item*, removes the item from the player's inventory
         Player* operator>>(Item* item) {
             FINDREMOVE(inventory, item);
             return this;

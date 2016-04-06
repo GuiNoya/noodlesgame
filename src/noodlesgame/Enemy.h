@@ -16,7 +16,7 @@ class Enemy : public Character {
     public:
         Enemy(string name, int x, int y, string filename);
         ~Enemy();
-        using Character::setPosition; // Indicates to also use the setPosition function in Character
+        using Character::setPosition; // Indicates to also use the setPosition functions in Character
         void setEnemyDown(bool b);
         void setEnemyOnRoom4(bool b);
         void setEnemyOnRoom5(bool b);

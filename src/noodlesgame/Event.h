@@ -7,7 +7,8 @@
 
 using namespace std;
 
-// Represents an Event in the game, the game is all linked by events
+// Represents an Event in the game
+// the game is all linked by events
 class Event {
 
     public:

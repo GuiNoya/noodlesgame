@@ -30,7 +30,7 @@ class ZorkFlee : public QMainWindow {
         Player player;
         Enemy enemy;
         Room *currentRoom;
-        Room *destRoom = 0; // Used to correctly draw rooms and at the and of the player's animation
+        Room *destRoom = 0;
         Event *showingEvent; // Currently displayed event
         vector<Room*> rooms; // Rooms in the game
         vector<Gateway*> gateways; // Gateways in the game
@@ -38,7 +38,7 @@ class ZorkFlee : public QMainWindow {
         map<string, Item*> items; // Items in the game
         const QImage gameLogo;
         bool gameOver = false;
-        QTimer* timer; // Used to create to main loop
+        QTimer* timer; // Used to run the main loop
 
         void createGame();
         void createRooms();

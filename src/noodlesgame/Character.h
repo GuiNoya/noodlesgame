@@ -21,14 +21,14 @@ class Character {
         };
 
         string name;
-        QRectF rect; // The position and size that image will be displayed
+        QRectF rect; // The position and size that the image will be displayed
         QImage image; // The image to be displayed
         QPointF direction; // The vector to the next destination of the current animation
         QPointF dest; // The destination point of the current animation
         queue<AnimationStep*> nextSteps; // The next animations
         function<void()> animCallback = 0; // The callback to be run after the end of the current animation
-        bool moving; // Indicates if the player is in processing an animation
-        bool waiting; // Indicates if the actual animation is to stay
+        bool moving; // Indicates if the player is animating
+        bool waiting; // Indicates if the current animation is to sleep
         static const int CHARACTER_HEIGHT = 30;
         static const int CHARACTER_WIDTH = 30;
 

@@ -56,7 +56,7 @@ class Room {
         bool isItemInRoom(int id);
         string displayItems();
 
-        // operator<< used with an Item* indicates to add the item to the room
+        // operator<< used with an Item*, adds the item to the room
         Room* operator<<(Item* item) {
             if (!isItemInRoom(item)) {
                 items.push_back(item);
@@ -64,7 +64,7 @@ class Room {
             return this;
         }
 
-        // operator>> used with an Item* indicates to remove the item from the room
+        // operator>> used with an Item*, removes the item from the room
         Room* operator>>(Item* item) {
             FINDREMOVE(items, item);
             return this;
