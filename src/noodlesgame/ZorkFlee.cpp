@@ -1,7 +1,7 @@
 #include "ZorkFlee.h"
 
-#define ROOM(x) rooms[x-1]
-#define CORR(x) rooms[6+x]
+#define ROOM(x) rooms[x-1] // Easier access to rooms
+#define CORR(x) rooms[6+x] // Easier access to corridors
 #define _SE showingEvent =
 
 using namespace std;
@@ -102,7 +102,7 @@ void ZorkFlee::createRooms() {
     r4->addPosition("sink", 127, 245);
     r4->addPosition("flashlight", 81, 286);
     r4->addPosition("cabinet", 134, 135);
-    r4->addPosition("freezer", 84, 165);
+    r4->addPosition("freezer", 64, 165);
     r5->addPosition("initial", 313, 163);
     r5->addPosition("desk", 292, 188);
     r5->addPosition("sink", 259, 70);
@@ -119,7 +119,7 @@ void ZorkFlee::createRooms() {
     r7->addPosition("p2", 60, -30);
     c1->addPosition("initial", 15, 65);
     c1->addPosition("plant", 9, 30);
-    c1->addPosition("default", 10, 110);
+    c1->addPosition("default", 10, 80);
     c2->addPosition("initial", 10, 66);
     c2->addPosition("leftdoor", 3, 44);
     c2->addPosition("rightdoor", 16, 95);
@@ -389,7 +389,7 @@ void ZorkFlee::createEvents() {
         {
         OPTION(22, "Check door on the right"),
         OPTION(21, "Go back on the corridor"),
-        OPTION(26, "Continue down the hall")
+        OPTION(26, "Continue down the hall"),
         }
     );
 
@@ -1117,9 +1117,7 @@ void ZorkFlee::createItems(){
     *ROOM(4) << items["flashlight"];
 }
 
-/**
- *  Main play routine.  Loops until end of play.
- */
+// Show the window that runs the game
 void ZorkFlee::play() {
     show();
 }
@@ -1140,22 +1138,20 @@ void ZorkFlee::changeRoom(Gateway* gateway, string currentRoomPosId, string next
 
     if (nextRoom != NULL) {
         destRoom = nextRoom;
-        if (currentRoomPosId != "") { // TODO: Checar se esta na mesma posicao da sala atual
+        if (currentRoomPosId != "") {
             player.addAnimation(currentRoom->getPosition(currentRoomPosId), 1000);
             player.addAnimation(destRoom->getPosition(nextPositionId), 1000);
         } else {
             player.addAnimation(destRoom->getPosition(nextPositionId), 1500);
         }
-        //timer->start(ANIMATION_DELAY);
-        //runAnimation(player, destRoom->getPosition(nextPositionId));
     } else {
         cerr << "Could not change room: " << currentRoom->getName() << " using " << gateway->toString() << endl;
     }
 }
 
+// Sets an animation for character, given the next position and the duration of the animation
 inline void ZorkFlee::runAnimation(Character& character, QPoint nextPosition, int timeMs) {
     character.addAnimation(nextPosition, timeMs);
-    //timer->start(ANIMATION_DELAY);
 }
 
 void ZorkFlee::performOption(Event::Option* option) {
@@ -1284,7 +1280,7 @@ void ZorkFlee::performOption(Event::Option* option) {
                 events[22]->disableOption(3);
                 events[22]->enableOption(4);
             }
-            if (enemy.isOnRoom4() || enemy.isDown()){
+            if (enemy.isOnRoom4() || enemy.isOnRoom5() || enemy.isDown()){
                 events[22]->disableOption(6);
                 events[22]->enableOption(7);
             } else {
@@ -1296,7 +1292,7 @@ void ZorkFlee::performOption(Event::Option* option) {
             runAnimation(player, currentRoom->getPosition("leftdoor"));
             break;
         case 24:
-            runAnimation(player, currentRoom->getPosition("window"));
+            runAnimation(player, currentRoom->getPosition("plant"));
             break;
         case 25:
             player.addAnimation(ROOM(3)->getPosition("middle"), 1250);
@@ -1320,7 +1316,7 @@ void ZorkFlee::performOption(Event::Option* option) {
                 events[25]->disableOption(2);
                 events[25]->enableOption(3);
             }
-            if (enemy.isOnRoom4() || enemy.isDown()){
+            if (enemy.isOnRoom4() || enemy.isOnRoom5() || enemy.isDown()){
                 events[25]->disableOption(5);
                 events[25]->enableOption(6);
             } else {
@@ -1509,7 +1505,7 @@ void ZorkFlee::performOption(Event::Option* option) {
                 events[46]->enableOption(3);
             } else {
                 events[46]->enableOption(2);
-                events[46]->disableOption(2);
+                events[46]->disableOption(3);
             }
             if (enemy.hasReturned()){
                 events[46]->disableOption(0);
@@ -1883,7 +1879,7 @@ void ZorkFlee::performOption(Event::Option* option) {
             break;
         default: break;
     }
-    _SE events[option->id];
+    _SE events[option->id]; // Links to the next event
 }
 
 inline void ZorkFlee::createGateway(int id, Room* r1, Room* r2, bool locked) {
@@ -1902,6 +1898,7 @@ inline void ZorkFlee::drawItems(QPainter& painter, Room *room) {
     }
 }
 
+// Used to simplify the creation of events and make it more readable
 inline void ZorkFlee::EVENT(int id, string message, initializer_list<Event::Option*> list) {
     Event *e = new Event(id, message);
     for (auto i : list)
@@ -1909,10 +1906,12 @@ inline void ZorkFlee::EVENT(int id, string message, initializer_list<Event::Opti
     events[id] = e;
 }
 
+// Used to simplify the creation of options and make it more readable
 inline Event::Option* ZorkFlee::OPTION(int id, string message) {
     return new Event::Option(id, message);
 }
 
+// This manages the visual aspects of the program
 void ZorkFlee::paintEvent(QPaintEvent* e) {
     Q_UNUSED(e);
 
@@ -1920,20 +1919,21 @@ void ZorkFlee::paintEvent(QPaintEvent* e) {
 
     painter.drawImage(gameLogo.rect(), gameLogo);
 
-    // Draw every room
+    // Draw all the rooms
     for (Room* room : rooms) {
         painter.drawImage(room->getRect(), room->getImage());
         drawItems(painter, room);
     }
 
-    if (gameOver)
+    if (gameOver) // Sets the enemy to be above the player
         painter.drawImage(player.getRect(), player.getImage());
     // Draw enemy
     painter.drawImage(enemy.getRect(), enemy.getImage());
 
     // Draw the overlays
     for (Room* room : rooms) { // The separate loop is to draw items below all overlays
-        if ((room == currentRoom || room == destRoom) && room == ROOM(3) && !ROOM(3)->isVisible()){
+        // Exclusion rules at the beginning
+        if ((room == currentRoom || room == destRoom) && room == ROOM(3) && !ROOM(3)->isVisible()) {
             static const QPixmap overlay(ASSET((string)"overlay.png"));
             painter.drawPixmap(room->getRect(), overlay);
         }
@@ -1945,6 +1945,7 @@ void ZorkFlee::paintEvent(QPaintEvent* e) {
         }
         if (isVR) continue;
 
+        // At this point, an overlay is draw
         if (room->isVisible()) {
             static const QPixmap overlay(ASSET((string) "light-overlay.png"));
             painter.drawPixmap(room->getRect(), overlay);
@@ -1959,7 +1960,7 @@ void ZorkFlee::paintEvent(QPaintEvent* e) {
         painter.drawImage(player.getRect(), player.getImage());
 
 
-    // If not in movement, draw the text
+    // If not in movement, draw the text (except when the game ends)
     if (!player.isMoving() || gameOver) {
         QFont font = painter.font();
         font.setPixelSize(20);
@@ -2006,7 +2007,7 @@ void ZorkFlee::mouseReleaseEvent(QMouseEvent* e) {
 }
 
 void ZorkFlee::keyPressEvent(QKeyEvent *e) {
-    if (!player.isMoving() && !gameOver) {
+    if (!player.isMoving() && !gameOver) { // Accepts events when an animation is not running and the game is not over
         vector<Event::Option*> options = showingEvent->getEnabledOptions();
         if ((e->key() > Qt::Key_0) && (e->key() < (int) (Qt::Key_1 + options.size()))) {
             Event::Option* option = options[e->key() - Qt::Key_1];
@@ -2018,11 +2019,10 @@ void ZorkFlee::keyPressEvent(QKeyEvent *e) {
     }
 }
 
-void ZorkFlee::animate() {
+void ZorkFlee::animate() { // Start of the game loop, where the positions and rooms are updated
     enemy.update();
     bool finished = player.update();
     if (finished) {
-        //timer->stop();
         if (destRoom) {
             if (destRoom != ROOM(3))
                 destRoom->setVisible(true);

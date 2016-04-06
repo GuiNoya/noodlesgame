@@ -7,6 +7,8 @@
 
 using namespace std;
 
+
+// Represents a door or passageway
 class Gateway {
 
     private:

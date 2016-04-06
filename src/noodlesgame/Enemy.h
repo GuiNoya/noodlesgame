@@ -6,16 +6,17 @@
 
 class Enemy : public Character {
     private:
+        //Flags
         bool enemyDown = false;
         bool onRoom4 = false;
         bool onRoom5 = false;
         bool enemyReturn = false;
-        map<string, pair<Room*, QPoint>*> positions;
+        map<string, pair<Room*, QPoint>*> positions; // Enemy positions: point in a Room
 
     public:
         Enemy(string name, int x, int y, string filename);
         ~Enemy();
-        using Character::setPosition;
+        using Character::setPosition; // Indicates to also use the setPosition function in Character
         void setEnemyDown(bool b);
         void setEnemyOnRoom4(bool b);
         void setEnemyOnRoom5(bool b);

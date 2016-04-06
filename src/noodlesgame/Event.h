@@ -7,9 +7,11 @@
 
 using namespace std;
 
+// Represents an Event in the game, the game is all linked by events
 class Event {
 
     public:
+        // struct to store an option
         struct Option {
             int id;
             string label;

@@ -12,6 +12,7 @@ using namespace std;
 
 class Character {
     protected:
+        // AnimationStep is used for storing animations
         struct AnimationStep {
             const QPointF point;
             const int duration;
@@ -20,14 +21,14 @@ class Character {
         };
 
         string name;
-        QRectF rect;
-        QImage image;
-        QPointF direction;
-        QPointF dest;
-        queue<AnimationStep*> nextSteps;
-        function<void()> animCallback = 0;
-        bool moving;
-        bool waiting;
+        QRectF rect; // The position and size that image will be displayed
+        QImage image; // The image to be displayed
+        QPointF direction; // The vector to the next destination of the current animation
+        QPointF dest; // The destination point of the current animation
+        queue<AnimationStep*> nextSteps; // The next animations
+        function<void()> animCallback = 0; // The callback to be run after the end of the current animation
+        bool moving; // Indicates if the player is in processing an animation
+        bool waiting; // Indicates if the actual animation is to stay
         static const int CHARACTER_HEIGHT = 30;
         static const int CHARACTER_WIDTH = 30;
 
@@ -42,7 +43,7 @@ class Character {
         void setPosition(const QPointF point);
         void addAnimation(const QPointF dest, int duration, const function<void()>& c=0);
         void addSleepAnimation(int duration, const function<void()>& c=0);
-        virtual bool update();
+        virtual bool update(); // Function to run inside the main loop, that will mainly update the player's position
         virtual string toString();
 };
 

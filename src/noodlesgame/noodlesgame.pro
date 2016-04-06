@@ -30,7 +30,3 @@ HEADERS  += \
     ZorkFlee.h \
     Character.h \
     Enemy.h
-
-DISTFILES +=
-
-RESOURCES +=

@@ -15,19 +15,19 @@
 
 using namespace std;
 
-class Gateway;
+class Gateway; // Forward declaration to avoid cross reference
 
 class Room {
 
     private:
         string name;
         vector<Item*> items;
-        vector<Gateway*> gateways;
-        vector<Room*> viewableRooms;
-        bool visible = false;
-        QRect rect;
-        QImage image;
-        map<string, QPoint> positions;
+        vector<Gateway*> gateways; // Gateways on the room
+        vector<Room*> viewableRooms; // Rooms that are visible if the player is on the room
+        bool visible = false; // If the room is visible
+        QRect rect; // Rectangle to draw the image on
+        QImage image; // Image to be draw
+        map<string, QPoint> positions; // Pre-defined player's positions
 
     public:
         Room(string name, QRect rect, string filename);
@@ -56,6 +56,7 @@ class Room {
         bool isItemInRoom(int id);
         string displayItems();
 
+        // operator<< used with an Item* indicates to add the item to the room
         Room* operator<<(Item* item) {
             if (!isItemInRoom(item)) {
                 items.push_back(item);
@@ -63,6 +64,7 @@ class Room {
             return this;
         }
 
+        // operator>> used with an Item* indicates to remove the item from the room
         Room* operator>>(Item* item) {
             FINDREMOVE(items, item);
             return this;

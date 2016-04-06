@@ -17,8 +17,8 @@ class Item {
         int id;
         string name;
         string description;
-        QRect rect;
-        QImage image;
+        QRect rect; // Rectangle to draw image on
+        QImage image; // Image to draw
 
     public:
         Item(int id, string name, string description, QRect rect = QRect(), string filename = "");
